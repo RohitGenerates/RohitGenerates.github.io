@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollTrigger: {
             trigger: '#about-section',
             start: 'top 60%',
-            toggleActions: 'play none none reverse'
+            toggleActions: 'play reverse play reverse'
         },
         y: 50,
         opacity: 0,
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollTrigger: {
             trigger: '#about-section',
             start: 'top 60%',
-            toggleActions: 'play none none reverse'
+            toggleActions: 'play reverse play reverse'
         },
         scale: 0.9,
         opacity: 0,
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollTrigger: {
             trigger: '#project-grid',
             start: 'top 75%',
-            toggleActions: 'play none none reverse'
+            toggleActions: 'play reverse play reverse'
         },
         opacity: 1,
         scale: 1,

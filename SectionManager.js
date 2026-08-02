@@ -17,7 +17,6 @@ export default class SectionManager {
         this.scrollLock = new ScrollLock();
         this.transitionManager = new TransitionManager(this.scrollLock);
         this.animationManager = new AnimationManager();
-        this.setupScrollTriggers();
 
         // Forward transition events downstream for other subsystems
         this.transitionManager.on('transitionStarted', data => this.emitter.emit('transitionStarted', data));
@@ -33,6 +32,7 @@ export default class SectionManager {
         this.sections = sectionIds.map(id => ({ id, el: document.getElementById(id) }));
         // Ensure each section has a data attribute for root detection
         this.sections.forEach((s, i) => { s.el.dataset.sectionIndex = i; });
+        this.setupScrollTriggers();
     }
 
     /* Used by the page to declare entrance timelines */
@@ -66,8 +66,6 @@ export default class SectionManager {
         if (!current || !target) return;
         // Transition request
         this.transitionManager.play(current.id, target.id);
-        // Listen to transition finished to reveal and play entrance
-        this.transitionManager.emit('transitionFinished', { from: current.id, to: target.id });
         // First hide target section until transition starts
         gsap.set(target.el, { opacity: 0, scale: 0.96, filter: 'blur(6px)' });
         // The actual reveal will be done in transitionFinished callback below

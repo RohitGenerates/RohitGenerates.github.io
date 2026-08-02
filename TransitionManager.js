@@ -50,26 +50,26 @@ export default class TransitionManager {
         // Ensure video is reset
         vidEl.pause();
         vidEl.currentTime = 0;
-        vidEl.src = opts.videoSrc || vidEl.getAttribute('src') || vidEl.src;
-        vidEl.load(); // reset playback state
 
         // Phase 1 – bring video to front, fade it in
-        tl.set(imgEl, { opacity: 1 });
-        tl.set(vidEl, { opacity: 0 });
-        tl.to(vidEl, { currentTime: 0, opacity: 1, ease: 'none' }, 0);
-        tl.to(imgEl, { opacity: 0, ease: 'none' }, 0);
-
-        // Phase 2 – fade back to image
-        const vidDuration = vidEl.duration || 0;
+        const vidDuration = vidEl.duration || 3.0;
         const transitionDuration = opts.duration || 2.6; // default
         const duration = transitionDuration;
-        const delay = 0;
         const mid = transitionDuration * 0.54; // ~ 60% of range
         const snap = vidDuration >= transitionDuration ? transitionDuration : vidDuration;
 
-        tl.to(vidEl, { currentTime: snap, ease: 'none' }, 0);
-        tl.to(vidEl, { opacity: 0, ease: 'none' }, mid);
-        tl.to(imgEl, { opacity: 1, ease: 'none' }, mid);
+        tl.set(imgEl, { opacity: 1 });
+        tl.set(vidEl, { opacity: 0, zIndex: 60 });
+        tl.to(vidEl, { duration: duration, currentTime: snap, ease: 'none' }, 0);
+        tl.to(vidEl, { duration: duration - mid, opacity: 1, ease: 'none' }, 0);
+        tl.to(imgEl, { duration: Math.min(1.0, duration - mid), opacity: 0, ease: 'none' }, 0); // fade out bg quickly
+
+        // Phase 2 – fade back to image
+        tl.to(vidEl, { duration: duration - mid, opacity: 0, ease: 'none' }, mid);
+        tl.to(imgEl, { duration: duration - mid, opacity: 1, ease: 'none' }, mid);
+        
+        // Reset zIndex after completion
+        tl.set(vidEl, { zIndex: 0 });
 
         return tl;
     }
