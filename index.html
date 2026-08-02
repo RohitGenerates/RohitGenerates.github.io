@@ -96,20 +96,16 @@
 </head>
 <body class="bg-background font-body-md text-body-md text-on-surface antialiased">
 
-<!-- ============ GLOBAL FIXED BACKGROUND (whole-site character bg) ============ -->
-<!-- <div id="global-hero-bg" class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-    <div id="global-hero-img-wrap" class="absolute inset-0 flex items-center justify-center opacity-[0.14]">
-        <img id="global-hero-img" src="assets/hero-character.jpg" alt="" class="h-[130vh] w-auto object-contain select-none"/>
-    </div>
-    <div class="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background"></div>
-    <div class="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40"></div>
-</div> -->
-
-<div id="global-hero-img-wrap" class="relative w-full h-full overflow-hidden">
-    <video id="hero-video" class="w-full h-full object-cover" muted playsinline preload="auto">
+<!-- ============ FIXED SCRUB BACKGROUND (image <-> video crossfade) ============ -->
+<!-- This layer sits behind everything (z-0) and is full-viewport + fixed, so it
+     can be shown/hidden/crossfaded independently of page scroll position. -->
+<div id="scrub-bg" class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+    <img id="scrub-bg-img" src="assets/hero-character.jpg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-100"/>
+    <video id="scrub-bg-video" class="absolute inset-0 w-full h-full object-cover opacity-0" muted playsinline preload="auto">
         <source src="assets/hero-character.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
+    <div class="absolute inset-0 bg-gradient-to-b from-background/60 via-background/70 to-background"></div>
 </div>
 
 <!-- ============ FIXED SIDE NAV ============ -->
@@ -140,7 +136,6 @@
     <!-- ============ FIXED HEADER (search bar removed) ============ -->
     <header class="fixed top-0 left-[100px] right-0 h-20 z-40 bg-gradient-to-b from-background/80 to-transparent backdrop-blur-sm px-container-padding flex items-center justify-end">
         <div class="flex items-center gap-gutter">
-            <!-- <button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">notifications</span></button> -->
             <div class="flex items-center gap-base p-1 pr-4 bg-surface-container-highest/30 backdrop-blur-md rounded-full border border-white/5">
                 <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div>
                 <span class="text-label-sm font-label-sm uppercase tracking-wider text-on-surface">Portfolio.os</span>

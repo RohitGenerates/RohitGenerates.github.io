@@ -105,62 +105,118 @@ document.addEventListener('DOMContentLoaded', () => {
         delay: 0.15
     });
 
-/* ==============================================================
-       2. GLOBAL BACKGROUND — Scrub-driven video playback
+    /* ==============================================================
+       NAV / SECTION SETUP (shared by scroll-spy + both scrub systems)
        ============================================================== */
-    const heroVideo = document.getElementById('hero-video');
+    const navItems = document.querySelectorAll('.nav-item');
+    const sectionOrder = ['home-section', 'about-section', 'projects-section', 'contact-section'];
+    const sectionsForNav = sectionOrder.map(id => document.getElementById(id));
 
-    if (heroVideo) {
-        // Ensure metadata is loaded so video.duration is available
-        heroVideo.pause();
-        
-        let videoDuration = 0;
+    function setActiveNav(activeItem) {
+        if (!activeItem) return;
+        navItems.forEach(nav => {
+            nav.classList.remove('bg-primary', 'text-on-primary', 'shadow-[0_0_15px_rgba(233,196,0,0.4)]');
+            nav.classList.add('text-on-surface-variant');
+            nav.removeAttribute('aria-current');
+        });
+        activeItem.classList.remove('text-on-surface-variant');
+        activeItem.classList.add('bg-primary', 'text-on-primary', 'shadow-[0_0_15px_rgba(233,196,0,0.4)]');
+        activeItem.setAttribute('aria-current', 'page');
+    }
 
-        heroVideo.addEventListener('loadedmetadata', () => {
-            videoDuration = heroVideo.duration;
-
-            // Create the scrub-to-scroll animation
-            gsap.to(heroVideo, {
-                currentTime: videoDuration,
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: 'body',
-                    start: 'top top',
-                    end: 'bottom bottom',
-                    scrub: 0.5, // Adjust scrub smoothness (lower = more responsive, higher = smoother/lagged)
-                }
-            });
+    function scrollToTarget(targetEl, duration) {
+        if (!targetEl) return;
+        gsap.to(window, {
+            duration: duration,
+            scrollTo: { y: targetEl, offsetY: 0 },
+            ease: 'power3.inOut'
         });
     }
-    // /* ==============================================================
-    //    2. GLOBAL BACKGROUND — whole-site character, subtle cursor drift
-    //    ============================================================== */
-    // const globalHeroImg = document.getElementById('global-hero-img');
-    // if (globalHeroImg) {
-    //     window.addEventListener('mousemove', (e) => {
-    //         const xPos = (e.clientX / window.innerWidth - 0.5) * 24; // small, subtle range
-    //         const yPos = (e.clientY / window.innerHeight - 0.5) * 24;
-    //         gsap.to(globalHeroImg, {
-    //             x: xPos,
-    //             y: yPos,
-    //             duration: 2.2,
-    //             ease: 'power2.out'
-    //         });
-    //     });
 
-    //     // Very gentle scroll-tied breathing so it doesn't feel like a static sticker
-    //     gsap.to('#global-hero-img-wrap', {
-    //         scrollTrigger: {
-    //             trigger: 'body',
-    //             start: 'top top',
-    //             end: 'bottom bottom',
-    //             scrub: 2
-    //         },
-    //         scale: 1.06,
-    //         opacity: 0.1,
-    //         ease: 'none'
-    //     });
-    // }
+    /* ==============================================================
+       2. SCRUB BACKGROUND — image <-> video crossfade
+       ------------------------------------------------------------
+       Two INDEPENDENT drivers control the same video/img pair:
+
+       A) SCROLL-DRIVEN (scrub: tied 1:1 to scroll position). Runs once
+          per section boundary — as you scroll past the end of one
+          section into the next, the video comes forward and plays,
+          then crossfades back to the still image once you land on
+          the new section.
+
+       B) NAV-DRIVEN (fast, fixed-duration, plays automatically when a
+          sidebar nav button is clicked). While this plays, the
+          scroll-driven ScrollTriggers for the crossfade are disabled
+          so the two systems never fight over video.currentTime /
+          opacity at the same time. They're re-enabled the moment the
+          nav animation + programmatic scroll finish, at which point
+          ScrollTrigger re-syncs itself to the arrived scroll position.
+       ============================================================== */
+    const scrubImg = document.getElementById('scrub-bg-img');
+    const scrubVideo = document.getElementById('scrub-bg-video');
+
+    let scrubDuration = 0;
+    let scrubReady = false;
+    const boundaryScrollTriggers = [];
+
+    function buildScrollBoundaries() {
+        // One crossfade per section boundary (i.e. for every section after the first).
+        for (let i = 1; i < sectionsForNav.length; i++) {
+            const target = sectionsForNav[i];
+            if (!target) continue;
+
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: target,
+                    start: 'top bottom',   // boundary starts as next section enters viewport
+                    end: 'top top',        // boundary ends once next section fully arrives
+                    scrub: 0.4,
+                    id: `scrub-boundary-${i}`
+                }
+            });
+
+            // Phase 1 (0 -> 0.6 of the range): video comes to front and plays
+            tl.fromTo(scrubVideo, { currentTime: 0 }, { currentTime: () => scrubDuration, ease: 'none' }, 0)
+              .fromTo(scrubVideo, { opacity: 0 }, { opacity: 1, ease: 'none' }, 0)
+              .fromTo(scrubImg, { opacity: 1 }, { opacity: 0, ease: 'none' }, 0)
+              // Phase 2 (0.6 -> 1 of the range): smoothly fade back to the still image
+              .to(scrubVideo, { opacity: 0, ease: 'none' }, 0.6)
+              .to(scrubImg, { opacity: 1, ease: 'none' }, 0.6);
+
+            boundaryScrollTriggers.push(tl.scrollTrigger);
+        }
+    }
+
+    if (scrubVideo) {
+        scrubVideo.pause();
+        scrubVideo.addEventListener('loadedmetadata', () => {
+            scrubDuration = scrubVideo.duration || 0;
+            scrubReady = scrubDuration > 0;
+            if (scrubReady) buildScrollBoundaries();
+        });
+    }
+
+    // B) Fast, nav-triggered version — independent of scroll.
+    function playScrubFast(callback) {
+        if (!scrubReady || !scrubVideo) { if (callback) callback(); return; }
+
+        // Freeze the scroll-driven crossfades so they don't fight this tween.
+        boundaryScrollTriggers.forEach(st => st.disable(false));
+
+        gsap.timeline({
+            onComplete: () => {
+                // Hand control back to scroll; it will resync to wherever we land.
+                boundaryScrollTriggers.forEach(st => st.enable());
+                if (callback) callback();
+            }
+        })
+            .set(scrubVideo, { currentTime: 0 })
+            .to(scrubVideo, { opacity: 1, duration: 0.15, ease: 'power1.out' }, 0)
+            .to(scrubImg, { opacity: 0, duration: 0.15, ease: 'power1.out' }, 0)
+            .to(scrubVideo, { currentTime: scrubDuration, duration: 0.5, ease: 'none' }, 0)
+            .to(scrubVideo, { opacity: 0, duration: 0.2, ease: 'power1.in' }, 0.4)
+            .to(scrubImg, { opacity: 1, duration: 0.2, ease: 'power1.in' }, 0.4);
+    }
 
     /* ==============================================================
        3. ENTRANCE ANIMATIONS
@@ -226,38 +282,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==============================================================
-       5. NAVIGATION — smooth scroll (shortened) + active-state sync
+       5. NAVIGATION — smooth scroll + active-state sync + fast scrub
        ============================================================== */
-    const navItems = document.querySelectorAll('.nav-item');
-    const sectionOrder = ['home-section', 'about-section', 'projects-section', 'contact-section'];
-    const sectionsForNav = sectionOrder.map(id => document.getElementById(id));
-
-    function setActiveNav(activeItem) {
-        if (!activeItem) return;
-        navItems.forEach(nav => {
-            nav.classList.remove('bg-primary', 'text-on-primary', 'shadow-[0_0_15px_rgba(233,196,0,0.4)]');
-            nav.classList.add('text-on-surface-variant');
-            nav.removeAttribute('aria-current');
-        });
-        activeItem.classList.remove('text-on-surface-variant');
-        activeItem.classList.add('bg-primary', 'text-on-primary', 'shadow-[0_0_15px_rgba(233,196,0,0.4)]');
-        activeItem.setAttribute('aria-current', 'page');
-    }
-
-    function scrollToTarget(targetEl, duration) {
-        if (!targetEl) return;
-        gsap.to(window, {
-            duration: duration,
-            scrollTo: { y: targetEl, offsetY: 0 },
-            ease: 'power3.inOut'
-        });
-    }
-
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const targetId = item.getAttribute('data-target');
-            scrollToTarget(document.getElementById(targetId), 0.6); // shortened vs. natural scroll
+            scrollToTarget(document.getElementById(targetId), 0.6);
+            playScrubFast(); // independent fast crossfade, runs alongside the scroll
             setActiveNav(item);
         });
 

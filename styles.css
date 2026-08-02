@@ -45,11 +45,13 @@ main > :last-child {
     z-index: 10;
 }
 
-/* ---------- Global fixed background ---------- */
-#global-hero-bg {
+/* ---------- Fixed scrub background (image <-> video crossfade) ---------- */
+#scrub-bg {
     isolation: isolate;
 }
-#global-hero-img {
+#scrub-bg-img,
+#scrub-bg-video {
+    will-change: opacity;
     filter: saturate(0.9);
 }
 
