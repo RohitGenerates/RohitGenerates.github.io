@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==============================================================
        1. SCROLL REVEAL — the "fluid" motion used across every section
        ============================================================== */
-    const revealTargets = gsap.utils.toArray('.page-section, .page-subsection');
+    const revealTargets = gsap.utils.toArray('.page-subsection');
 
     gsap.set(revealTargets, { opacity: 0, y: 60, scale: 0.96, filter: 'blur(6px)' });
 
@@ -152,70 +152,14 @@ document.addEventListener('DOMContentLoaded', () => {
           nav animation + programmatic scroll finish, at which point
           ScrollTrigger re-syncs itself to the arrived scroll position.
        ============================================================== */
-    const scrubImg = document.getElementById('scrub-bg-img');
-    const scrubVideo = document.getElementById('scrub-bg-video');
-
-    let scrubDuration = 0;
-    let scrubReady = false;
-    const boundaryScrollTriggers = [];
-
-    function buildScrollBoundaries() {
-        // One crossfade per section boundary (i.e. for every section after the first).
-        for (let i = 1; i < sectionsForNav.length; i++) {
-            const target = sectionsForNav[i];
-            if (!target) continue;
-
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: target,
-                    start: 'top bottom',   // boundary starts as next section enters viewport
-                    end: 'top top',        // boundary ends once next section fully arrives
-                    scrub: 0.4,
-                    id: `scrub-boundary-${i}`
-                }
-            });
-
-            // Phase 1 (0 -> 0.6 of the range): video comes to front and plays
-            tl.fromTo(scrubVideo, { currentTime: 0 }, { currentTime: () => scrubDuration, ease: 'none' }, 0)
-              .fromTo(scrubVideo, { opacity: 0 }, { opacity: 1, ease: 'none' }, 0)
-              .fromTo(scrubImg, { opacity: 1 }, { opacity: 0, ease: 'none' }, 0)
-              // Phase 2 (0.6 -> 1 of the range): smoothly fade back to the still image
-              .to(scrubVideo, { opacity: 0, ease: 'none' }, 0.6)
-              .to(scrubImg, { opacity: 1, ease: 'none' }, 0.6);
-
-            boundaryScrollTriggers.push(tl.scrollTrigger);
-        }
-    }
-
-    if (scrubVideo) {
-        scrubVideo.pause();
-        scrubVideo.addEventListener('loadedmetadata', () => {
-            scrubDuration = scrubVideo.duration || 0;
-            scrubReady = scrubDuration > 0;
-            if (scrubReady) buildScrollBoundaries();
-        });
-    }
+    // Scrub background boundaries are now handled by TransitionManager.
 
     // B) Fast, nav-triggered version — independent of scroll.
     function playScrubFast(callback) {
-        if (!scrubReady || !scrubVideo) { if (callback) callback(); return; }
-
-        // Freeze the scroll-driven crossfades so they don't fight this tween.
-        boundaryScrollTriggers.forEach(st => st.disable(false));
-
-        gsap.timeline({
-            onComplete: () => {
-                // Hand control back to scroll; it will resync to wherever we land.
-                boundaryScrollTriggers.forEach(st => st.enable());
-                if (callback) callback();
-            }
-        })
-            .set(scrubVideo, { currentTime: 0 })
-            .to(scrubVideo, { opacity: 1, duration: 0.15, ease: 'power1.out' }, 0)
-            .to(scrubImg, { opacity: 0, duration: 0.15, ease: 'power1.out' }, 0)
-            .to(scrubVideo, { currentTime: scrubDuration, duration: 0.5, ease: 'none' }, 0)
-            .to(scrubVideo, { opacity: 0, duration: 0.2, ease: 'power1.in' }, 0.4)
-            .to(scrubImg, { opacity: 1, duration: 0.2, ease: 'power1.in' }, 0.4);
+        if (window.sectionMgr && window.sectionMgr.transitionManager) {
+            window.sectionMgr.transitionManager.play('nav', 'nav', { duration: 0.85 });
+        }
+        if (callback) callback();
     }
 
     /* ==============================================================
