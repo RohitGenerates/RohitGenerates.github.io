@@ -1,0 +1,62 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overscroll-behavior: none;
+    background-color: #131313;
+    overflow-x: hidden;
+}
+
+main > :first-child {
+    margin-top: 0 !important;
+}
+
+main > :last-child {
+    margin-bottom: 0 !important;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* ---------- Section scroll-reveal base states ---------- */
+.page-section,
+.page-subsection {
+    will-change: transform, opacity, filter;
+}
+
+.project-card,
+.project-hover-card,
+.reveal-card {
+    will-change: transform, opacity;
+}
+
+.project-card:hover {
+    z-index: 10;
+}
+
+/* ---------- Global fixed background ---------- */
+#global-hero-bg {
+    isolation: isolate;
+}
+#global-hero-img {
+    filter: saturate(0.9);
+}
+
+/* ---------- Project modal ---------- */
+#project-modal.flex {
+    display: flex;
+}
+#project-modal-panel::-webkit-scrollbar {
+    display: none;
+}
