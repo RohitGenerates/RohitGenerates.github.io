@@ -51,25 +51,41 @@ export default class TransitionManager {
         vidEl.pause();
         vidEl.currentTime = 0;
 
-        // Phase 1 – bring video to front, fade it in
-        const vidDuration = vidEl.duration || 3.0;
         const transitionDuration = opts.duration || 2.6; // default
         const duration = transitionDuration;
         const mid = transitionDuration * 0.54; // ~ 60% of range
-        const snap = vidDuration >= transitionDuration ? transitionDuration : vidDuration;
+        const targetEl = document.getElementById(toSectionId);
+
+        // Calculate dynamic playback rate and play natively
+        const vidDuration = vidEl.duration || 4.0;
+        vidEl.playbackRate = vidDuration / duration;
+        vidEl.play().catch(err => console.warn('Video play failed:', err));
 
         tl.set(imgEl, { opacity: 1 });
-        tl.set(vidEl, { opacity: 0, zIndex: 60 });
-        tl.to(vidEl, { duration: duration, currentTime: snap, ease: 'none' }, 0);
-        tl.to(vidEl, { duration: duration - mid, opacity: 1, ease: 'none' }, 0);
-        tl.to(imgEl, { duration: Math.min(1.0, duration - mid), opacity: 0, ease: 'none' }, 0); // fade out bg quickly
+        tl.set(vidEl, { opacity: 0, zIndex: 100 });
+        
+        // Phase 1 – bring video to front, fade it in
+        tl.to(vidEl, { duration: mid, opacity: 1, ease: 'power1.inOut' }, 0);
+        tl.to(imgEl, { duration: mid, opacity: 0, ease: 'power1.inOut' }, 0); // fade out bg quickly
+
+        // Scroll or run custom layout action at midpoint (obscured viewport)
+        tl.call(() => {
+            if (opts.onMidpoint) {
+                opts.onMidpoint();
+            } else if (targetEl) {
+                window.scrollTo(0, targetEl.offsetTop);
+            }
+        }, null, mid);
 
         // Phase 2 – fade back to image
-        tl.to(vidEl, { duration: duration - mid, opacity: 0, ease: 'none' }, mid);
-        tl.to(imgEl, { duration: duration - mid, opacity: 1, ease: 'none' }, mid);
+        tl.to(vidEl, { duration: duration - mid, opacity: 0, ease: 'power1.inOut' }, mid);
+        tl.to(imgEl, { duration: duration - mid, opacity: 1, ease: 'power1.inOut' }, mid);
         
-        // Reset zIndex after completion
+        // Reset zIndex and pause video after completion
         tl.set(vidEl, { zIndex: 0 });
+        tl.call(() => {
+            vidEl.pause();
+        });
 
         return tl;
     }

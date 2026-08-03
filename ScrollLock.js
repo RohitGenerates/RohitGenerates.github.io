@@ -2,16 +2,18 @@
 export default class ScrollLock {
     constructor() {
         this.locked = false;
-        this._onWheel = this._onWheel.bind(this);
-        // Listen to wheel and touchmove to negate manual scroll during lock
-        window.addEventListener('wheel', this._onWheel, { passive: false });
-        window.addEventListener('touchmove', this._onWheel, { passive: false });
+        this._onKeydown = this._onKeydown.bind(this);
+        // Listen only to keydown to negate manual scroll during lock
+        window.addEventListener('keydown', this._onKeydown, { passive: false });
     }
 
-    _onWheel(e) {
+    _onKeydown(e) {
         if (this.locked) {
-            e.preventDefault();
-            e.stopPropagation();
+            const keys = ['Space', ' ', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'];
+            if (keys.includes(e.key)) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
         }
     }
 
