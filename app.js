@@ -5,12 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Create SectionManager
     const sectionMgr = new SectionManager();
 
-    // Register all sections in physical DOM order (including subsections)
+    // Register only the 4 main sections (subsections are physically grouped inside them)
     const sectionOrder = [
         'home-section',
-        'bento-section',
         'about-section',
-        'about-details',
         'projects-section',
         'contact-section'
     ];
@@ -19,24 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Register custom entrance timelines for programmatic lock/unlock and flawless execution
     const { gsap } = window;
 
-    // 1. Home Section Entrance Timeline
+    // 1. Home Section Entrance Timeline (includes Bento animation)
     const homeTl = gsap.timeline();
     homeTl
         .fromTo('#main-glass', { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out' })
         .fromTo('#home-section h1', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power4.out' }, '-=0.8')
         .fromTo('.project-hover-card', { scale: 0.8, opacity: 0 }, {
             scale: 1, opacity: 1, stagger: 0.1, duration: 0.8, ease: 'back.out(1.7)'
-        }, '-=0.6');
+        }, '-=0.6')
+        .fromTo('#bento-section', { opacity: 0, y: 60, scale: 0.96, filter: 'blur(6px)' }, {
+            opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.2, ease: 'power2.out'
+        }, '-=0.4');
     sectionMgr.animationManager.registerTimeline('home-section', homeTl);
 
-    // 2. Bento Section Entrance Timeline
-    const bentoTl = gsap.timeline();
-    bentoTl.fromTo('#bento-section', { opacity: 0, y: 60, scale: 0.96, filter: 'blur(6px)' }, {
-        opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.2, ease: 'power2.out'
-    });
-    sectionMgr.animationManager.registerTimeline('bento-section', bentoTl);
-
-    // 3. About Section Entrance Timeline
+    // 2. About Section Entrance Timeline (includes About Details animation)
     const aboutTl = gsap.timeline();
     aboutTl
         .fromTo('.about-hero-text > *', { y: 50, opacity: 0 }, {
@@ -44,24 +38,24 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .fromTo('.about-hero-image', { scale: 0.9, opacity: 0 }, {
             scale: 1, opacity: 1, duration: 1.5, ease: 'expo.out'
-        }, '-=0.8');
+        }, '-=0.8')
+        .fromTo('#about-details', { opacity: 0, y: 60, scale: 0.96, filter: 'blur(6px)' }, {
+            opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.2, ease: 'power2.out'
+        }, '-=0.6');
     sectionMgr.animationManager.registerTimeline('about-section', aboutTl);
 
-    // 4. About Details Entrance Timeline
-    const aboutDetailsTl = gsap.timeline();
-    aboutDetailsTl.fromTo('#about-details', { opacity: 0, y: 60, scale: 0.96, filter: 'blur(6px)' }, {
-        opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.2, ease: 'power2.out'
-    });
-    sectionMgr.animationManager.registerTimeline('about-details', aboutDetailsTl);
-
-    // 5. Projects Section Entrance Timeline
+    // 3. Projects Section Entrance Timeline
     const projectsTl = gsap.timeline();
-    projectsTl.fromTo('.project-card', { opacity: 0, scale: 0.95, y: 30 }, {
-        opacity: 1, scale: 1, y: 0, duration: 1, stagger: 0.08, ease: 'power3.out'
-    });
+    projectsTl
+        .fromTo('#projects-section > div:not(#project-grid)', { opacity: 0, y: 30 }, {
+            opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out'
+        })
+        .fromTo('.project-card', { opacity: 0, scale: 0.95, y: 30 }, {
+            opacity: 1, scale: 1, y: 0, duration: 1, stagger: 0.08, ease: 'power3.out'
+        }, '-=0.6');
     sectionMgr.animationManager.registerTimeline('projects-section', projectsTl);
 
-    // 6. Contact Section Entrance Timeline
+    // 4. Contact Section Entrance Timeline
     const contactTl = gsap.timeline();
     contactTl
         .fromTo('#contact-section h1', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power4.out' })

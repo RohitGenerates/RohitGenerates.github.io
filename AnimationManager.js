@@ -71,11 +71,10 @@ export default class AnimationManager {
         return promise;
     }
 
-    unload(sectionId) {
+    unload(sectionId, timeScale = 2.5) {
         const tl = this.timelines.get(sectionId);
         if (!tl) return Promise.resolve();
 
-        // Ensure we initialize the list of resolves for this section
         if (!this.resolves.has(sectionId)) {
             this.resolves.set(sectionId, []);
         }
@@ -84,15 +83,13 @@ export default class AnimationManager {
             this.resolves.get(sectionId).push(resolve);
         });
 
-        // Set the completion callback to resolve all pending promises for this section
         tl.eventCallback('onReverseComplete', () => {
             const list = this.resolves.get(sectionId) || [];
             this.resolves.set(sectionId, []);
             list.forEach(resolve => resolve());
         });
 
-        // Make reverse exit animation faster than entrance (2.0x speed)
-        tl.timeScale(2.0);
+        tl.timeScale(timeScale);
         tl.reverse();
 
         return promise;

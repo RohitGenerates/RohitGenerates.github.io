@@ -95,19 +95,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.sectionMgr) {
                 const targetIdx = window.sectionMgr.sections.findIndex(s => s.id === targetId);
                 if (targetIdx !== -1) {
-                    window.sectionMgr.goToSection(targetIdx, { duration: 1.5 });
+                    window.sectionMgr.goToSection(targetIdx, { duration: 1.5, unloadTimeScale: 5 });
                 }
             }
         });
 
         item.addEventListener('mouseenter', () => {
             if (!item.hasAttribute('aria-current')) {
-                gsap.to(item, { backgroundColor: 'rgba(255, 255, 255, 0.1)', scale: 1.08, duration: 0.3 });
+                gsap.to(item, { scale: 1.08, duration: 0.3, ease: 'power2.out' });
             }
         });
         item.addEventListener('mouseleave', () => {
             if (!item.hasAttribute('aria-current')) {
-                gsap.to(item, { backgroundColor: 'transparent', scale: 1, duration: 0.3 });
+                gsap.to(item, { scale: 1, duration: 0.3, ease: 'power2.out' });
             }
         });
     });
@@ -116,18 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         if (window.sectionMgr) {
             window.sectionMgr.on('transitionStarted', ({ from, to }) => {
-                // Map sections & subsections to their corresponding parent nav items
-                let navIdx = 0;
-                if (to === 'home-section' || to === 'bento-section') {
-                    navIdx = 0;
-                } else if (to === 'about-section' || to === 'about-details') {
-                    navIdx = 1;
-                } else if (to === 'projects-section') {
-                    navIdx = 2;
-                } else if (to === 'contact-section') {
-                    navIdx = 3;
+                const targetIdx = window.sectionMgr.sections.findIndex(s => s.id === to);
+                if (targetIdx !== -1) {
+                    setActiveNav(navItems[targetIdx]);
                 }
-                setActiveNav(navItems[navIdx]);
             });
         }
     }, 100);
@@ -149,8 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (manifestoBtn) {
         manifestoBtn.addEventListener('click', () => {
             if (window.sectionMgr) {
-                const targetIdx = window.sectionMgr.sections.findIndex(s => s.id === 'about-details');
-                if (targetIdx !== -1) window.sectionMgr.goToSection(targetIdx);
+                const targetIdx = window.sectionMgr.sections.findIndex(s => s.id === 'about-section');
+                if (targetIdx !== -1) window.sectionMgr.goToSection(targetIdx, { scrollToId: 'about-details' });
             }
         });
     }
@@ -159,8 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (journeyBtn) {
         journeyBtn.addEventListener('click', () => {
             if (window.sectionMgr) {
-                const targetIdx = window.sectionMgr.sections.findIndex(s => s.id === 'about-details');
-                if (targetIdx !== -1) window.sectionMgr.goToSection(targetIdx);
+                const targetIdx = window.sectionMgr.sections.findIndex(s => s.id === 'about-section');
+                if (targetIdx !== -1) window.sectionMgr.goToSection(targetIdx, { scrollToId: 'journey-card' });
             }
         });
     }

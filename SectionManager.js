@@ -23,7 +23,7 @@ export default class SectionManager {
             this.emitter.emit('transitionStarted', data);
         });
         this.transitionManager.on('transitionFinished', data => this.emitter.emit('transitionFinished', data));
-        
+
         // Handle completion locally
         this.emitter.on('transitionFinished', data => this._onTransitionFinished(data));
 
@@ -64,34 +64,50 @@ export default class SectionManager {
 
         const fromSec = this.sections[this.currentIndex];
         const toSec = this.sections[targetIdx];
-        const isDown = targetIdx > this.currentIndex;
 
         this.currentIndex = targetIdx;
 
         // Lock scroll immediately while we animate the exit
         this.scrollLock.lock();
 
-        // Play exit/unload animation on the active section first
-        this.animationManager.unload(fromSec.id).then(() => {
-            // Once exit animation finishes, load target section in DOM flow
-            toSec.el.style.display = '';
+        const unloadTimeScale = opts.unloadTimeScale ?? 2.5;
 
-            // Play the fullscreen transition
-            this.transitionManager.play(fromSec.id, toSec.id, {
-                ...opts,
-                onMidpoint: () => {
-                    // Midpoint: screen is covered by opaque video.
-                    // Safely hide the old section and reset scroll offset.
-                    fromSec.el.style.display = 'none';
+        // Start reversing the elements of the current section immediately (no waiting!)
+        this.animationManager.unload(fromSec.id, unloadTimeScale);
 
-                    if (isDown) {
-                        window.scrollTo(0, 0);
-                    } else {
-                        const scrollTarget = toSec.el.scrollHeight - window.innerHeight;
-                        window.scrollTo(0, Math.max(0, scrollTarget));
+        // Load target section in DOM flow immediately
+        toSec.el.style.display = '';
+
+        // Play the fullscreen transition immediately
+        this.transitionManager.play(fromSec.id, toSec.id, {
+            ...opts,
+            onMidpoint: () => {
+                // Midpoint: screen is covered by opaque video.
+                // Safely hide the old section
+                fromSec.el.style.display = 'none';
+
+                // Force reset the timeline to start so it is clean for next entry
+                const fromTl = this.animationManager.timelines.get(fromSec.id);
+                if (fromTl) {
+                    fromTl.progress(0).pause();
+                }
+
+                // If a sub-element ID was specified, scroll to its absolute top offset
+                if (opts.scrollToId) {
+                    const targetSubEl = document.getElementById(opts.scrollToId);
+                    if (targetSubEl) {
+                        let top = 0;
+                        let curr = targetSubEl;
+                        while (curr) {
+                            top += curr.offsetTop;
+                            curr = curr.offsetParent;
+                        }
+                        window.scrollTo(0, top);
+                        return;
                     }
                 }
-            });
+                window.scrollTo(0, 0);
+            }
         });
     }
 
@@ -180,7 +196,7 @@ export default class SectionManager {
 
         // Reveal target immediately
         gsap.to(target.el, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power2.out' });
-        
+
         this.animationManager.play(to).then(() => {
             this.scrollLock.unlock();
             this.transitionManager.isTransitioning = false;
