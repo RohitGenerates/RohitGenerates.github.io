@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.sectionMgr) {
                 const targetIdx = window.sectionMgr.sections.findIndex(s => s.id === targetId);
                 if (targetIdx !== -1) {
-                    window.sectionMgr.goToSection(targetIdx, { duration: 0.85 });
+                    window.sectionMgr.goToSection(targetIdx, { duration: 1.5 });
                 }
             }
         });
@@ -116,17 +116,18 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         if (window.sectionMgr) {
             window.sectionMgr.on('transitionStarted', ({ from, to }) => {
-                const targetIdx = window.sectionMgr.sections.findIndex(s => s.id === to);
-                if (targetIdx !== -1) {
-                    // Map subsections to the corresponding parent nav items
-                    let navIdx = targetIdx;
-                    if (to === 'bento-section') navIdx = 0; // home
-                    else if (to === 'about-details') navIdx = 1; // about
-                    else if (to === 'projects-section') navIdx = 2; // projects
-                    else if (to === 'contact-section') navIdx = 3; // contact
-                    
-                    setActiveNav(navItems[navIdx]);
+                // Map sections & subsections to their corresponding parent nav items
+                let navIdx = 0;
+                if (to === 'home-section' || to === 'bento-section') {
+                    navIdx = 0;
+                } else if (to === 'about-section' || to === 'about-details') {
+                    navIdx = 1;
+                } else if (to === 'projects-section') {
+                    navIdx = 2;
+                } else if (to === 'contact-section') {
+                    navIdx = 3;
                 }
+                setActiveNav(navItems[navIdx]);
             });
         }
     }, 100);
@@ -225,4 +226,40 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeProjectModal();
     });
+
+    /* ==============================================================
+       8. GLOBAL BACKGROUND — parallax mouse drift (ref.md)
+       ============================================================== */
+    const scrubBg = document.getElementById('scrub-bg');
+    if (scrubBg) {
+        // Slightly scale up background to prevent black edges during drift
+        gsap.set(scrubBg, { scale: 1.05 });
+        window.addEventListener('mousemove', (e) => {
+            const xPos = (e.clientX / window.innerWidth - 0.5) * 24; // subtle drift range
+            const yPos = (e.clientY / window.innerHeight - 0.5) * 24;
+            gsap.to(scrubBg, {
+                x: xPos,
+                y: yPos,
+                duration: 2.2,
+                ease: 'power2.out'
+            });
+        });
+    }
+
+    /* ==============================================================
+       9. SEQUENCE BUTTON & STUB
+       ============================================================== */
+    window.sequence = function () {
+        console.log('Sequence button triggered!');
+        // Sequence implementation stub
+    };
+
+    const tokenBtn = document.getElementById('nav-logo-token');
+    if (tokenBtn) {
+        tokenBtn.addEventListener('click', () => {
+            if (typeof window.sequence === 'function') {
+                window.sequence();
+            }
+        });
+    }
 });

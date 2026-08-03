@@ -60,6 +60,7 @@ export default class SectionManager {
     goToSection(targetIdx, opts = {}) {
         if (targetIdx < 0 || targetIdx >= this.sections.length) return;
         if (this.scrollLock.isLocked()) return;
+        if (targetIdx === this.currentIndex) return;
 
         const fromSec = this.sections[this.currentIndex];
         const toSec = this.sections[targetIdx];
@@ -67,24 +68,30 @@ export default class SectionManager {
 
         this.currentIndex = targetIdx;
 
-        // Reveal the target section display so it's active in layout
-        toSec.el.style.display = '';
+        // Lock scroll immediately while we animate the exit
+        this.scrollLock.lock();
 
-        // Play the fullscreen transition
-        this.transitionManager.play(fromSec.id, toSec.id, {
-            ...opts,
-            onMidpoint: () => {
-                // Midpoint: screen is covered by opaque video.
-                // Safely hide the old section and reset scroll offset.
-                fromSec.el.style.display = 'none';
+        // Play exit/unload animation on the active section first
+        this.animationManager.unload(fromSec.id).then(() => {
+            // Once exit animation finishes, load target section in DOM flow
+            toSec.el.style.display = '';
 
-                if (isDown) {
-                    window.scrollTo(0, 0);
-                } else {
-                    const scrollTarget = toSec.el.scrollHeight - window.innerHeight;
-                    window.scrollTo(0, Math.max(0, scrollTarget));
+            // Play the fullscreen transition
+            this.transitionManager.play(fromSec.id, toSec.id, {
+                ...opts,
+                onMidpoint: () => {
+                    // Midpoint: screen is covered by opaque video.
+                    // Safely hide the old section and reset scroll offset.
+                    fromSec.el.style.display = 'none';
+
+                    if (isDown) {
+                        window.scrollTo(0, 0);
+                    } else {
+                        const scrollTarget = toSec.el.scrollHeight - window.innerHeight;
+                        window.scrollTo(0, Math.max(0, scrollTarget));
+                    }
                 }
-            }
+            });
         });
     }
 

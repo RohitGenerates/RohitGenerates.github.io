@@ -58,6 +58,9 @@ export default class AnimationManager {
             list.forEach(resolve => resolve());
         });
 
+        // Reset speed for forward entrance animation
+        tl.timeScale(1.0);
+
         // If the timeline is already actively running, do not interrupt it with restart().
         // Let it run to completion for a smoother visual transition.
         if (tl.isActive()) {
@@ -65,6 +68,33 @@ export default class AnimationManager {
         }
 
         tl.restart();
+        return promise;
+    }
+
+    unload(sectionId) {
+        const tl = this.timelines.get(sectionId);
+        if (!tl) return Promise.resolve();
+
+        // Ensure we initialize the list of resolves for this section
+        if (!this.resolves.has(sectionId)) {
+            this.resolves.set(sectionId, []);
+        }
+
+        const promise = new Promise(resolve => {
+            this.resolves.get(sectionId).push(resolve);
+        });
+
+        // Set the completion callback to resolve all pending promises for this section
+        tl.eventCallback('onReverseComplete', () => {
+            const list = this.resolves.get(sectionId) || [];
+            this.resolves.set(sectionId, []);
+            list.forEach(resolve => resolve());
+        });
+
+        // Make reverse exit animation faster than entrance (2.0x speed)
+        tl.timeScale(2.0);
+        tl.reverse();
+
         return promise;
     }
 }

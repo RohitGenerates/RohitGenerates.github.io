@@ -1,632 +1,811 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Portfolio.os</title>
 
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-    tailwind.config = {
-        darkMode: "class",
-        theme: {
-            extend: {
-                "colors": {
-                    "surface-variant": "#353534",
-                    "secondary-container": "#fe9d00",
-                    "secondary-fixed-dim": "#ffb869",
-                    "on-background": "#e5e2e1",
-                    "on-secondary-fixed": "#2c1700",
-                    "primary-fixed-dim": "#e9c400",
-                    "surface-tint": "#e9c400",
-                    "on-tertiary-fixed-variant": "#004f54",
-                    "outline": "#999077",
-                    "inverse-surface": "#e5e2e1",
-                    "on-primary-container": "#705e00",
-                    "on-primary-fixed": "#221b00",
-                    "on-secondary-container": "#663c00",
-                    "surface-container-low": "#1c1b1b",
-                    "secondary-fixed": "#ffdcbb",
-                    "error": "#ffb4ab",
-                    "on-surface": "#e5e2e1",
-                    "error-container": "#93000a",
-                    "on-tertiary-fixed": "#002022",
-                    "on-error-container": "#ffdad6",
-                    "tertiary": "#defcff",
-                    "surface-container": "#201f1f",
-                    "surface-bright": "#393939",
-                    "on-error": "#690005",
-                    "surface": "#131313",
-                    "inverse-primary": "#705d00",
-                    "on-surface-variant": "#d0c6ab",
-                    "tertiary-container": "#00f1ff",
-                    "on-tertiary": "#00363a",
-                    "secondary": "#ffc384",
-                    "primary-fixed": "#ffe16d",
-                    "outline-variant": "#4d4732",
-                    "surface-container-high": "#2a2a2a",
-                    "tertiary-fixed": "#79f5ff",
-                    "surface-container-highest": "#353534",
-                    "on-secondary-fixed-variant": "#673d00",
-                    "on-primary": "#3a3000",
-                    "background": "#131313",
-                    "on-tertiary-container": "#006a70",
-                    "surface-container-lowest": "#0e0e0e",
-                    "primary-container": "#ffd700",
-                    "primary": "#fff6df",
-                    "inverse-on-surface": "#313030",
-                    "on-primary-fixed-variant": "#544600",
-                    "tertiary-fixed-dim": "#00dbe8",
-                    "on-secondary": "#482900",
-                    "surface-dim": "#131313"
-                },
-                "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "full": "9999px"
-                },
-                "spacing": {
-                    "base": "8px",
-                    "gutter": "24px",
-                    "margin-mobile": "16px",
-                    "container-padding": "40px"
-                },
-                "fontFamily": {
-                    "label-sm": ["Geist"],
-                    "headline-lg": ["Bricolage Grotesque"],
-                    "display-xl": ["Bricolage Grotesque"],
-                    "headline-lg-mobile": ["Bricolage Grotesque"],
-                    "body-md": ["Plus Jakarta Sans"]
-                },
-                "fontSize": {
-                    "label-sm": ["12px", {"lineHeight": "100%", "fontWeight": "600"}],
-                    "headline-lg": ["48px", {"lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-                    "display-xl": ["84px", {"lineHeight": "90%", "letterSpacing": "-0.04em", "fontWeight": "800"}],
-                    "headline-lg-mobile": ["32px", {"lineHeight": "110%", "fontWeight": "800"}],
-                    "body-md": ["16px", {"lineHeight": "160%", "fontWeight": "500"}]
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Portfolio.os</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#353534",
+                        "secondary-container": "#fe9d00",
+                        "secondary-fixed-dim": "#ffb869",
+                        "on-background": "#e5e2e1",
+                        "on-secondary-fixed": "#2c1700",
+                        "primary-fixed-dim": "#e9c400",
+                        "surface-tint": "#e9c400",
+                        "on-tertiary-fixed-variant": "#004f54",
+                        "outline": "#999077",
+                        "inverse-surface": "#e5e2e1",
+                        "on-primary-container": "#705e00",
+                        "on-primary-fixed": "#221b00",
+                        "on-secondary-container": "#663c00",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed": "#ffdcbb",
+                        "error": "#ffb4ab",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed": "#002022",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#defcff",
+                        "surface-container": "#201f1f",
+                        "surface-bright": "#393939",
+                        "on-error": "#690005",
+                        "surface": "#131313",
+                        "inverse-primary": "#705d00",
+                        "on-surface-variant": "#d0c6ab",
+                        "tertiary-container": "#00f1ff",
+                        "on-tertiary": "#00363a",
+                        "secondary": "#ffc384",
+                        "primary-fixed": "#ffe16d",
+                        "outline-variant": "#4d4732",
+                        "surface-container-high": "#2a2a2a",
+                        "tertiary-fixed": "#79f5ff",
+                        "surface-container-highest": "#353534",
+                        "on-secondary-fixed-variant": "#673d00",
+                        "on-primary": "#3a3000",
+                        "background": "#131313",
+                        "on-tertiary-container": "#006a70",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-container": "#ffd700",
+                        "primary": "#fff6df",
+                        "inverse-on-surface": "#313030",
+                        "on-primary-fixed-variant": "#544600",
+                        "tertiary-fixed-dim": "#00dbe8",
+                        "on-secondary": "#482900",
+                        "surface-dim": "#131313"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "container-padding": "40px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Geist"],
+                        "headline-lg": ["Bricolage Grotesque"],
+                        "display-xl": ["Bricolage Grotesque"],
+                        "headline-lg-mobile": ["Bricolage Grotesque"],
+                        "body-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "100%", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "display-xl": ["84px", { "lineHeight": "90%", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "110%", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "160%", "fontWeight": "500" }]
+                    }
                 }
             }
         }
-    }
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@100..900&family=Geist:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css">
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@100..900&family=Geist:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body class="bg-background font-body-md text-body-md text-on-surface antialiased">
 
-<!-- ============ FIXED SCRUB BACKGROUND (image <-> video crossfade) ============ -->
-<!-- This layer sits behind everything (z-0) and is full-viewport + fixed, so it
+    <!-- ============ FIXED SCRUB BACKGROUND (image <-> video crossfade) ============ -->
+    <!-- This layer sits behind everything (z-0) and is full-viewport + fixed, so it
      can be shown/hidden/crossfaded independently of page scroll position. -->
-<div id="scrub-bg" class="fixed inset-0 overflow-hidden pointer-events-none">
-    <img id="scrub-bg-img" src="assets/hero-character.jpg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-100"/>
-    <video id="scrub-bg-video" class="absolute inset-0 w-full h-full object-cover opacity-0" muted playsinline preload="auto">
-        <source src="assets/hero-character.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    <div class="absolute inset-0 bg-gradient-to-b from-background/60 via-background/70 to-background"></div>
-</div>
-
-<!-- ============ FIXED SIDE NAV ============ -->
-<aside class="fixed left-gutter top-1/2 -translate-y-1/2 z-50 flex flex-col gap-base items-center">
-    <div class="p-2 mb-4">
-        <div class="w-12 h-12 bg-primary flex items-center justify-center rounded-xl shadow-[0_0_20px_rgba(233,196,0,0.3)]">
-            <span class="material-symbols-outlined text-on-primary">token</span>
-        </div>
+    <div id="scrub-bg" class="fixed inset-0 overflow-hidden pointer-events-none">
+        <img id="scrub-bg-img" src="assets/hero-character.jpg" alt=""
+            class="absolute inset-0 w-full h-full object-cover opacity-100" />
+        <video id="scrub-bg-video" class="absolute inset-0 w-full h-full object-cover opacity-0" muted playsinline
+            preload="auto">
+            <source src="assets/hero-character.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="absolute inset-0 bg-gradient-to-b from-background/60 via-background/70 to-background"></div>
     </div>
-    <nav class="flex flex-col gap-base p-2 bg-surface-container/40 backdrop-blur-2xl rounded-full border border-white/10">
-        <a aria-current="page" class="nav-item w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 bg-primary text-on-primary shadow-[0_0_15px_rgba(233,196,0,0.4)]" data-target="home-section" href="#home-section">
-            <span class="material-symbols-outlined">home</span>
-        </a>
-        <a class="nav-item w-12 h-12 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-bright hover:text-on-surface transition-all duration-300" data-target="about-section" href="#about-section">
-            <span class="material-symbols-outlined">person</span>
-        </a>
-        <a class="nav-item w-12 h-12 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-bright hover:text-on-surface transition-all duration-300" data-target="projects-section" href="#projects-section">
-            <span class="material-symbols-outlined">grid_view</span>
-        </a>
-        <a class="nav-item w-12 h-12 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-bright hover:text-on-surface transition-all duration-300" data-target="contact-section" href="#contact-section">
-            <span class="material-symbols-outlined">alternate_email</span>
-        </a>
-    </nav>
-</aside>
 
-<div class="pl-[100px] relative z-10">
-
-    <!-- ============ FIXED HEADER (search bar removed) ============ -->
-    <header class="fixed top-0 left-[100px] right-0 h-20 z-40 bg-gradient-to-b from-background/80 to-transparent backdrop-blur-sm px-container-padding flex items-center justify-end">
-        <div class="flex items-center gap-gutter">
-            <div class="flex items-center gap-base p-1 pr-4 bg-surface-container-highest/30 backdrop-blur-md rounded-full border border-white/5">
-                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div>
-                <span class="text-label-sm font-label-sm uppercase tracking-wider text-on-surface">Portfolio.os</span>
+    <!-- ============ FIXED SIDE NAV ============ -->
+    <aside class="fixed left-gutter top-1/2 -translate-y-1/2 z-50 flex flex-col gap-base items-center">
+        <div class="p-2 mb-4">
+            <div id="nav-logo-token"
+                class="w-12 h-12 bg-primary flex items-center justify-center rounded-xl shadow-[0_0_20px_rgba(233,196,0,0.3)] cursor-pointer hover:scale-105 active:scale-95 transition-all">
+                <span class="material-symbols-outlined text-on-primary">token</span>
             </div>
         </div>
-    </header>
+        <nav
+            class="flex flex-col gap-base p-2 bg-surface-container/40 backdrop-blur-2xl rounded-full border border-white/10">
+            <a aria-current="page"
+                class="nav-item w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 bg-primary text-on-primary shadow-[0_0_15px_rgba(233,196,0,0.4)]"
+                data-target="home-section" href="#home-section">
+                <span class="material-symbols-outlined">home</span>
+            </a>
+            <a class="nav-item w-12 h-12 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-bright hover:text-on-surface transition-all duration-300"
+                data-target="about-section" href="#about-section">
+                <span class="material-symbols-outlined">person</span>
+            </a>
+            <a class="nav-item w-12 h-12 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-bright hover:text-on-surface transition-all duration-300"
+                data-target="projects-section" href="#projects-section">
+                <span class="material-symbols-outlined">grid_view</span>
+            </a>
+            <a class="nav-item w-12 h-12 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-bright hover:text-on-surface transition-all duration-300"
+                data-target="contact-section" href="#contact-section">
+                <span class="material-symbols-outlined">alternate_email</span>
+            </a>
+        </nav>
+    </aside>
 
-    <main class="relative">
+    <div class="pl-[100px] relative z-10">
 
-        <!-- ================================================================= -->
-        <!-- SECTION 1 : HOME                                                 -->
-        <!-- ================================================================= -->
-        <section class="page-section relative min-h-screen w-full overflow-hidden flex items-center" id="home-section">
-            <div class="hero-content-wrapper h-full w-full flex flex-col items-center justify-center pt-20">
-                <div class="absolute inset-0 w-full flex items-center justify-center px-container-padding">
-                    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-                        <div class="absolute top-[20%] left-[10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse"></div>
-                        <div class="absolute bottom-[10%] right-[5%] w-[400px] h-[400px] bg-secondary-container/10 rounded-full blur-[100px]"></div>
-                    </div>
-                    <div class="relative z-10 w-full max-w-7xl backdrop-blur-[40px] bg-surface/40 border border-white/10 rounded-[48px] p-12 overflow-hidden shadow-2xl" id="main-glass">
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                        <div class="grid grid-cols-12 gap-gutter relative z-10">
-                            <div class="col-span-12 lg:col-span-5 flex flex-col justify-center gap-12">
-                                <div class="space-y-4">
-                                    <div class="flex items-center gap-base">
-                                        <span class="w-12 h-[2px] bg-primary"></span>
-                                        <span class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase">Creative Developer</span>
+        <!-- ============ FIXED HEADER (search bar removed) ============ -->
+        <!-- <header
+            class="fixed top-0 left-[100px] right-0 h-20 z-40 bg-gradient-to-b from-background/80 to-transparent backdrop-blur-sm px-container-padding flex items-center justify-end">
+            <div class="flex items-center gap-gutter">
+                <div
+                    class="flex items-center gap-base p-1 pr-4 bg-surface-container-highest/30 backdrop-blur-md rounded-full border border-white/5">
+                    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span
+                            class="material-symbols-outlined text-on-primary text-[18px]">person</span></div>
+                    <span
+                        class="text-label-sm font-label-sm uppercase tracking-wider text-on-surface">Portfolio.os</span>
+                </div>
+            </div>
+        </header> -->
+
+        <main class="relative">
+
+            <!-- ================================================================= -->
+            <!-- SECTION 1 : HOME                                                 -->
+            <!-- ================================================================= -->
+            <section class="page-section relative min-h-screen w-full overflow-hidden flex items-center"
+                id="home-section">
+                <div class="hero-content-wrapper h-full w-full flex flex-col items-center justify-center pt-20">
+                    <div class="absolute inset-0 w-full flex items-center justify-center px-container-padding">
+                        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                            <div
+                                class="absolute top-[20%] left-[10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse">
+                            </div>
+                            <div
+                                class="absolute bottom-[10%] right-[5%] w-[400px] h-[400px] bg-secondary-container/10 rounded-full blur-[100px]">
+                            </div>
+                        </div>
+                        <div class="relative z-10 w-full max-w-7xl backdrop-blur-[40px] bg-surface/40 border border-white/10 rounded-[48px] p-12 overflow-hidden shadow-2xl"
+                            id="main-glass">
+                            <div
+                                class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl">
+                            </div>
+                            <div class="grid grid-cols-12 gap-gutter relative z-10">
+                                <div class="col-span-12 lg:col-span-5 flex flex-col justify-center gap-12">
+                                    <div class="space-y-4">
+                                        <div class="flex items-center gap-base">
+                                            <span class="w-12 h-[2px] bg-primary"></span>
+                                            <span
+                                                class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase">Creative
+                                                Developer</span>
+                                        </div>
+                                        <h1 class="font-display-xl text-display-xl text-on-surface leading-tight">
+                                            IMMERSE IN<br />
+                                            <span
+                                                class="text-primary inline-block transform -skew-x-12">CREATIVITY</span>
+                                        </h1>
+                                        <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+                                            Architecting digital ecosystems where high-performance code meets
+                                            aggressive, editorial aesthetics. Exploring the boundary between anime
+                                            culture and modern UI.
+                                        </p>
                                     </div>
-                                    <h1 class="font-display-xl text-display-xl text-on-surface leading-tight">
-                                        IMMERSE IN<br/>
-                                        <span class="text-primary inline-block transform -skew-x-12">CREATIVITY</span>
-                                    </h1>
-                                    <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
-                                        Architecting digital ecosystems where high-performance code meets aggressive, editorial aesthetics. Exploring the boundary between anime culture and modern UI.
-                                    </p>
-                                </div>
-                                <div class="flex items-center gap-gutter">
-                                    <button id="explore-works-btn" class="group relative flex items-center gap-base px-8 py-4 bg-primary text-on-primary rounded-full font-label-sm text-label-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(233,196,0,0.3)]">
-                                        Explore Works
-                                        <div class="w-8 h-8 rounded-full bg-on-primary/20 flex items-center justify-center group-hover:rotate-45 transition-transform">
-                                            <span class="material-symbols-outlined text-[18px]">arrow_outward</span>
-                                        </div>
-                                    </button>
-                                    <button id="view-manifesto-btn" class="font-label-sm text-label-sm text-on-surface hover:text-primary transition-colors flex items-center gap-2">
-                                        VIEW MANIFESTO
-                                        <span class="material-symbols-outlined text-[18px]">play_circle</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-span-12 lg:col-span-7 flex items-end justify-end relative h-[500px] lg:h-auto">
-                                <div class="grid grid-cols-2 gap-gutter w-full max-w-md">
-                                    <div class="project-hover-card group relative p-6 bg-white/5 backdrop-blur-md rounded-[32px] border border-white/10 hover:bg-white/10 transition-all cursor-pointer">
-                                        <div class="flex justify-between items-start mb-8">
-                                            <div class="w-12 h-12 rounded-2xl bg-surface-container flex items-center justify-center">
-                                                <span class="material-symbols-outlined text-primary">auto_awesome</span>
+                                    <div class="flex items-center gap-gutter">
+                                        <button id="explore-works-btn"
+                                            class="group relative flex items-center gap-base px-8 py-4 bg-primary text-on-primary rounded-full font-label-sm text-label-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(233,196,0,0.3)]">
+                                            Explore Works
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-on-primary/20 flex items-center justify-center group-hover:rotate-45 transition-transform">
+                                                <span class="material-symbols-outlined text-[18px]">arrow_outward</span>
                                             </div>
-                                            <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">north_east</span>
-                                        </div>
-                                        <div>
-                                            <div class="text-[32px] font-display-xl text-on-surface mb-1">24+</div>
-                                            <div class="font-label-sm text-label-sm text-on-surface-variant uppercase">Projects Completed</div>
-                                        </div>
-                                    </div>
-                                    <div class="project-hover-card group relative p-6 bg-primary backdrop-blur-md rounded-[32px] border border-white/10 hover:shadow-[0_0_40px_rgba(233,196,0,0.2)] transition-all cursor-pointer overflow-hidden">
-                                        <div class="absolute -right-4 -top-4 opacity-10">
-                                            <span class="material-symbols-outlined text-[120px]">terminal</span>
-                                        </div>
-                                        <div class="flex justify-between items-start mb-8 relative z-10">
-                                            <div class="w-12 h-12 rounded-2xl bg-on-primary/10 flex items-center justify-center">
-                                                <span class="material-symbols-outlined text-on-primary">code</span>
-                                            </div>
-                                        </div>
-                                        <div class="relative z-10">
-                                            <div class="text-[32px] font-display-xl text-on-primary mb-1">Tech</div>
-                                            <div class="font-label-sm text-label-sm text-on-primary/70 uppercase">Full-Stack Mastery</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-span-2 group p-8 bg-surface-container-highest/30 backdrop-blur-xl rounded-[32px] border border-white/5 hover:border-primary/30 transition-all">
-                                        <div class="flex items-center justify-between mb-6">
-                                            <div class="flex -space-x-4">
-                                                <div class="w-10 h-10 rounded-full border-2 border-background bg-surface-variant flex items-center justify-center text-on-surface text-[10px] uppercase font-bold">OS</div>
-                                                <div class="w-10 h-10 rounded-full border-2 border-background bg-primary flex items-center justify-center text-on-primary text-[10px] uppercase font-bold">JS</div>
-                                                <div class="w-10 h-10 rounded-full border-2 border-background bg-secondary flex items-center justify-center text-on-secondary text-[10px] uppercase font-bold">GL</div>
-                                            </div>
-                                            <div class="px-4 py-1 rounded-full bg-primary/10 border border-primary/20">
-                                                <span class="text-primary font-label-sm text-[10px] uppercase tracking-tighter">Current Experience</span>
-                                            </div>
-                                        </div>
-                                        <h3 class="font-headline-lg text-[24px] text-on-surface mb-2">Lead Interactive Designer</h3>
-                                        <p class="font-body-md text-on-surface-variant text-sm line-clamp-2">Directing the future of anime-integrated interfaces at OS-Portfolio Studio.</p>
+                                        </button>
+                                        <button id="view-manifesto-btn"
+                                            class="font-label-sm text-label-sm text-on-surface hover:text-primary transition-colors flex items-center gap-2">
+                                            VIEW MANIFESTO
+                                            <span class="material-symbols-outlined text-[18px]">play_circle</span>
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Secondary showcase strip still belongs conceptually to Home -->
-        <div class="relative z-10 px-container-padding pb-32 pt-24 page-subsection" id="bento-section">
-            <div class="grid grid-cols-12 gap-gutter">
-                <div class="col-span-12 lg:col-span-8 group relative overflow-hidden rounded-[40px] h-[500px]">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('assets/project-cyber-dashboard.jpg')"></div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-10 flex flex-col items-start gap-4">
-                        <span class="px-4 py-1 bg-primary text-on-primary rounded-full text-label-sm font-label-sm uppercase tracking-widest">Case Study</span>
-                        <h2 class="font-headline-lg text-on-surface">Neo-Cyber Interface</h2>
-                        <button class="w-12 h-12 rounded-full bg-white text-background flex items-center justify-center hover:bg-primary transition-colors">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-span-12 lg:col-span-4 bg-surface-container-high/40 backdrop-blur-md rounded-[40px] p-10 flex flex-col justify-between border border-white/5">
-                    <div>
-                        <h3 class="font-headline-lg text-[28px] text-on-surface mb-6">Mastered<br/><span class="text-primary">Tools</span></h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">TypeScript</span>
-                            <span class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">Three.js</span>
-                            <span class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">Tailwind</span>
-                            <span class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">GSAP</span>
-                            <span class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">Rust</span>
-                            <span class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">Figma</span>
-                        </div>
-                    </div>
-                    <div class="mt-8 pt-8 border-t border-white/10 flex items-center justify-between">
-                        <span class="text-on-surface-variant font-label-sm text-[11px] uppercase tracking-widest">Available for Freelance</span>
-                        <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#34d399]"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================================================================= -->
-        <!-- SECTION 2 : ABOUT                                                -->
-        <!-- ================================================================= -->
-        <section class="page-section relative min-h-screen w-full px-container-padding flex items-center overflow-hidden" id="about-section">
-            <div class="grid grid-cols-12 gap-gutter items-center w-full">
-                <div class="col-span-12 lg:col-span-6 flex flex-col items-start gap-8 z-10 about-hero-text">
-                    <div class="flex items-center gap-4">
-                        <span class="w-12 h-[1px] bg-primary"></span>
-                        <span class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase">The Architect</span>
-                    </div>
-                    <h2 class="font-display-xl text-display-xl text-on-surface leading-tight">
-                        CRAFTING <br/>
-                        <span class="text-primary italic">DIGITAL</span> <br/>
-                        REALMS
-                    </h2>
-                    <p class="font-body-md text-body-md text-on-surface-variant max-w-lg leading-relaxed">
-                        Bridging the gap between cinematic storytelling and interactive performance. I build high-energy environments where every pixel serves a purpose, inspired by the aggressive elegance of Japanese media and the sleek precision of modern glassmorphism.
-                    </p>
-                    <div class="flex gap-4 mt-4">
-                        <button id="view-journey-btn" class="bg-primary text-on-primary font-label-sm text-label-sm px-8 py-4 rounded-full flex items-center gap-4 hover:scale-105 transition-transform group shadow-[0_0_20px_rgba(233,196,0,0.4)]">
-                            VIEW JOURNEY
-                            <div class="w-8 h-8 rounded-full bg-on-primary/10 flex items-center justify-center group-hover:rotate-45 transition-transform">
-                                <span class="material-symbols-outlined text-[18px]">arrow_outward</span>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-span-12 lg:col-span-6 relative aspect-square group about-hero-image">
-                    <div class="absolute -inset-4 bg-primary/5 rounded-[40px] blur-3xl group-hover:bg-primary/10 transition-colors"></div>
-                    <div class="relative w-full h-full bg-surface-container/40 backdrop-blur-3xl rounded-[60px] border border-white/10 overflow-hidden shadow-2xl">
-                        <img class="w-full h-full object-cover mix-blend-luminosity hover:mix-blend-normal transition-all duration-700" alt="Portrait" src="assets/about-portrait.jpg"/>
-                        <div class="absolute bottom-8 right-8 bg-surface-bright/80 backdrop-blur-xl p-6 rounded-3xl border border-white/20 flex flex-col gap-2">
-                            <span class="font-label-sm text-[10px] text-primary uppercase tracking-tighter">Current Status</span>
-                            <span class="font-headline-lg text-[24px] text-on-surface leading-none">STORYTELLING</span>
-                            <div class="flex gap-1">
-                                <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                                <div class="w-2 h-2 rounded-full bg-primary/40"></div>
-                                <div class="w-2 h-2 rounded-full bg-primary/40"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="relative px-container-padding page-subsection" id="about-details">
-            <div class="grid grid-cols-12 gap-gutter w-full py-24" id="journey-card">
-                <div class="col-span-12 lg:col-span-8 bg-surface-container/20 backdrop-blur-2xl rounded-[40px] border border-white/5 p-12 flex flex-col gap-8 hover:bg-surface-container/30 transition-all reveal-card">
-                    <div class="flex justify-between items-start">
-                        <div class="flex flex-col gap-2">
-                            <h3 class="font-headline-lg text-headline-lg text-on-surface">My Journey</h3>
-                            <span class="font-label-sm text-label-sm text-on-surface-variant">2018 — PRESENT</span>
-                        </div>
-                        <span class="material-symbols-outlined text-primary text-[40px]">timeline</span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <div class="flex flex-col gap-4">
-                            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary">auto_awesome</span>
-                            </div>
-                            <h4 class="font-body-md font-bold text-on-surface uppercase tracking-wider">The Spark</h4>
-                            <p class="text-on-surface-variant leading-relaxed">Starting in Tokyo's underground indie scene, I focused on making web interfaces that felt as kinetic as the city itself.</p>
-                        </div>
-                        <div class="flex flex-col gap-4">
-                            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary">terminal</span>
-                            </div>
-                            <h4 class="font-body-md font-bold text-on-surface uppercase tracking-wider">The Fusion</h4>
-                            <p class="text-on-surface-variant leading-relaxed">Integrating heavy front-end engineering with art-direction-led design to create seamless, immersive digital experiences.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-12 lg:col-span-4 bg-primary rounded-[40px] p-12 flex flex-col justify-between group overflow-hidden relative reveal-card">
-                    <div class="absolute -right-8 -top-8 text-[120px] font-display-xl text-on-primary/10 select-none group-hover:scale-110 transition-transform">01</div>
-                    <h3 class="font-headline-lg text-headline-lg text-on-primary z-10">THE<br/>PHILOSOPHY</h3>
-                    <p class="font-body-md text-on-primary/80 z-10 mt-8 leading-relaxed">
-                        "Contrast is clarity. Luminance is direction. Movement is life." I believe every interaction should elicit a visceral response from the user.
-                    </p>
-                    <div class="mt-8 z-10 flex gap-2">
-                        <span class="px-4 py-2 bg-on-primary/10 rounded-full text-on-primary font-label-sm text-[10px] uppercase">Minimalism</span>
-                        <span class="px-4 py-2 bg-on-primary/10 rounded-full text-on-primary font-label-sm text-[10px] uppercase">Impact</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-surface-container/20 backdrop-blur-2xl rounded-[40px] border border-white/5 p-12 flex flex-col lg:flex-row gap-12 items-center reveal-card w-full mb-24">
-                <div class="flex-1 flex flex-col gap-4">
-                    <h3 class="font-headline-lg text-headline-lg text-on-surface">The Arsenal</h3>
-                    <p class="text-on-surface-variant">A collection of tools and techniques refined over years of creative exploration.</p>
-                </div>
-                <div class="flex-2 grid grid-cols-2 md:grid-cols-4 gap-6 w-full lg:w-auto">
-                    <div class="p-6 bg-surface-bright/30 rounded-3xl border border-white/5 text-center flex flex-col gap-2 hover:border-primary/50 transition-colors">
-                        <span class="font-label-sm text-primary">01</span>
-                        <span class="font-body-md text-on-surface font-bold">GSAP</span>
-                    </div>
-                    <div class="p-6 bg-surface-bright/30 rounded-3xl border border-white/5 text-center flex flex-col gap-2 hover:border-primary/50 transition-colors">
-                        <span class="font-label-sm text-primary">02</span>
-                        <span class="font-body-md text-on-surface font-bold">THREE.JS</span>
-                    </div>
-                    <div class="p-6 bg-surface-bright/30 rounded-3xl border border-white/5 text-center flex flex-col gap-2 hover:border-primary/50 transition-colors">
-                        <span class="font-label-sm text-primary">03</span>
-                        <span class="font-body-md text-on-surface font-bold">REACT</span>
-                    </div>
-                    <div class="p-6 bg-surface-bright/30 rounded-3xl border border-white/5 text-center flex flex-col gap-2 hover:border-primary/50 transition-colors">
-                        <span class="font-label-sm text-primary">04</span>
-                        <span class="font-body-md text-on-surface font-bold">SHADERS</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================================================================= -->
-        <!-- SECTION 3 : PROJECTS  (cards open a detail modal on click)       -->
-        <!-- ================================================================= -->
-        <section class="page-section relative min-h-screen w-full px-container-padding py-32 flex flex-col justify-center overflow-hidden" id="projects-section">
-            <div class="flex items-center gap-base mb-4">
-                <span class="w-12 h-[2px] bg-primary"></span>
-                <span class="font-label-sm text-label-sm text-primary uppercase tracking-[0.2em]">Selected Works 2024</span>
-            </div>
-            <div class="flex justify-between items-end mb-16">
-                <h1 class="font-display-xl text-display-xl text-on-surface uppercase tracking-tighter">
-                    Port<span class="text-primary italic">f</span>olio
-                </h1>
-                <div class="flex gap-gutter items-center mb-4">
-                    <div class="flex -space-x-4">
-                        <div class="w-10 h-10 rounded-full border-2 border-background bg-surface-container-high flex items-center justify-center">
-                            <span class="material-symbols-outlined text-[14px]">psychology</span>
-                        </div>
-                        <div class="w-10 h-10 rounded-full border-2 border-background bg-surface-container-high flex items-center justify-center">
-                            <span class="material-symbols-outlined text-[14px]">palette</span>
-                        </div>
-                        <div class="w-10 h-10 rounded-full border-2 border-background bg-primary flex items-center justify-center">
-                            <span class="material-symbols-outlined text-[14px] text-on-primary">bolt</span>
-                        </div>
-                    </div>
-                    <p class="font-body-md text-on-surface-variant max-w-xs text-right leading-tight">
-                        Merging high-fidelity visuals with expressive interactive narratives.
-                    </p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-12 gap-gutter" id="project-grid">
-
-                <!-- 1: Neon Genesis UI -->
-                <div class="col-span-12 md:col-span-8 group project-card" data-project="neon-genesis">
-                    <div class="relative aspect-[16/9] rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
-                        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('assets/project-ai-assistant.jpg')"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80"></div>
-                        <div class="absolute bottom-0 left-0 p-gutter flex justify-between items-end w-full">
-                            <div class="space-y-2">
-                                <div class="flex gap-2">
-                                    <span class="px-3 py-1 bg-primary/20 backdrop-blur-md border border-primary/30 rounded-full text-primary font-label-sm text-[10px] uppercase tracking-widest">Case Study</span>
-                                    <span class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white font-label-sm text-[10px] uppercase tracking-widest">Interaction</span>
+                                <div
+                                    class="col-span-12 lg:col-span-7 flex items-end justify-end relative h-[500px] lg:h-auto">
+                                    <div class="grid grid-cols-2 gap-gutter w-full max-w-md">
+                                        <div
+                                            class="project-hover-card group relative p-6 bg-white/5 backdrop-blur-md rounded-[32px] border border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+                                            <div class="flex justify-between items-start mb-8">
+                                                <div
+                                                    class="w-12 h-12 rounded-2xl bg-surface-container flex items-center justify-center">
+                                                    <span
+                                                        class="material-symbols-outlined text-primary">auto_awesome</span>
+                                                </div>
+                                                <span
+                                                    class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">north_east</span>
+                                            </div>
+                                            <div>
+                                                <div class="text-[32px] font-display-xl text-on-surface mb-1">24+</div>
+                                                <div
+                                                    class="font-label-sm text-label-sm text-on-surface-variant uppercase">
+                                                    Projects Completed</div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="project-hover-card group relative p-6 bg-primary backdrop-blur-md rounded-[32px] border border-white/10 hover:shadow-[0_0_40px_rgba(233,196,0,0.2)] transition-all cursor-pointer overflow-hidden">
+                                            <div class="absolute -right-4 -top-4 opacity-10">
+                                                <span class="material-symbols-outlined text-[120px]">terminal</span>
+                                            </div>
+                                            <div class="flex justify-between items-start mb-8 relative z-10">
+                                                <div
+                                                    class="w-12 h-12 rounded-2xl bg-on-primary/10 flex items-center justify-center">
+                                                    <span class="material-symbols-outlined text-on-primary">code</span>
+                                                </div>
+                                            </div>
+                                            <div class="relative z-10">
+                                                <div class="text-[32px] font-display-xl text-on-primary mb-1">Tech</div>
+                                                <div class="font-label-sm text-label-sm text-on-primary/70 uppercase">
+                                                    Full-Stack Mastery</div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-span-2 group p-8 bg-surface-container-highest/30 backdrop-blur-xl rounded-[32px] border border-white/5 hover:border-primary/30 transition-all">
+                                            <div class="flex items-center justify-between mb-6">
+                                                <div class="flex -space-x-4">
+                                                    <div
+                                                        class="w-10 h-10 rounded-full border-2 border-background bg-surface-variant flex items-center justify-center text-on-surface text-[10px] uppercase font-bold">
+                                                        OS</div>
+                                                    <div
+                                                        class="w-10 h-10 rounded-full border-2 border-background bg-primary flex items-center justify-center text-on-primary text-[10px] uppercase font-bold">
+                                                        JS</div>
+                                                    <div
+                                                        class="w-10 h-10 rounded-full border-2 border-background bg-secondary flex items-center justify-center text-on-secondary text-[10px] uppercase font-bold">
+                                                        GL</div>
+                                                </div>
+                                                <div
+                                                    class="px-4 py-1 rounded-full bg-primary/10 border border-primary/20">
+                                                    <span
+                                                        class="text-primary font-label-sm text-[10px] uppercase tracking-tighter">Current
+                                                        Experience</span>
+                                                </div>
+                                            </div>
+                                            <h3 class="font-headline-lg text-[24px] text-on-surface mb-2">Lead
+                                                Interactive Designer</h3>
+                                            <p class="font-body-md text-on-surface-variant text-sm line-clamp-2">
+                                                Directing the future of anime-integrated interfaces at OS-Portfolio
+                                                Studio.</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <h3 class="font-headline-lg text-headline-lg text-white">NEON GENESIS UI</h3>
                             </div>
-                            <button type="button" class="project-open-btn bg-white hover:bg-primary transition-all duration-300 px-8 py-4 rounded-full flex items-center gap-4 group/btn shadow-[0_10px_40px_rgba(0,0,0,0.3)]">
-                                <span class="font-label-sm text-on-background uppercase tracking-wider group-hover/btn:text-on-primary">View Project</span>
-                                <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center group-hover/btn:bg-on-primary">
-                                    <span class="material-symbols-outlined text-[18px] text-on-primary group-hover/btn:text-primary">arrow_forward</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Secondary showcase strip still belongs conceptually to Home -->
+            <div class="relative z-10 px-container-padding pb-32 pt-24 page-subsection" id="bento-section">
+                <div class="grid grid-cols-12 gap-gutter">
+                    <div class="col-span-12 lg:col-span-8 group relative overflow-hidden rounded-[40px] h-[500px]">
+                        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                            style="background-image: url('assets/project-cyber-dashboard.jpg')"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent">
+                        </div>
+                        <div class="absolute bottom-0 left-0 p-10 flex flex-col items-start gap-4">
+                            <span
+                                class="px-4 py-1 bg-primary text-on-primary rounded-full text-label-sm font-label-sm uppercase tracking-widest">Case
+                                Study</span>
+                            <h2 class="font-headline-lg text-on-surface">Neo-Cyber Interface</h2>
+                            <button
+                                class="w-12 h-12 rounded-full bg-white text-background flex items-center justify-center hover:bg-primary transition-colors">
+                                <span class="material-symbols-outlined">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        class="col-span-12 lg:col-span-4 bg-surface-container-high/40 backdrop-blur-md rounded-[40px] p-10 flex flex-col justify-between border border-white/5">
+                        <div>
+                            <h3 class="font-headline-lg text-[28px] text-on-surface mb-6">Mastered<br /><span
+                                    class="text-primary">Tools</span></h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">TypeScript</span>
+                                <span
+                                    class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">Three.js</span>
+                                <span
+                                    class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">Tailwind</span>
+                                <span
+                                    class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">GSAP</span>
+                                <span
+                                    class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">Rust</span>
+                                <span
+                                    class="px-4 py-2 bg-white/5 rounded-xl text-on-surface-variant font-label-sm text-[12px] uppercase">Figma</span>
+                            </div>
+                        </div>
+                        <div class="mt-8 pt-8 border-t border-white/10 flex items-center justify-between">
+                            <span
+                                class="text-on-surface-variant font-label-sm text-[11px] uppercase tracking-widest">Available
+                                for Freelance</span>
+                            <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#34d399]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================================================================= -->
+            <!-- SECTION 2 : ABOUT                                                -->
+            <!-- ================================================================= -->
+            <section
+                class="page-section relative min-h-screen w-full px-container-padding flex items-center overflow-hidden"
+                id="about-section">
+                <div class="grid grid-cols-12 gap-gutter items-center w-full">
+                    <div class="col-span-12 lg:col-span-6 flex flex-col items-start gap-8 z-10 about-hero-text">
+                        <div class="flex items-center gap-4">
+                            <span class="w-12 h-[1px] bg-primary"></span>
+                            <span class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase">The
+                                Architect</span>
+                        </div>
+                        <h2 class="font-display-xl text-display-xl text-on-surface leading-tight">
+                            CRAFTING <br />
+                            <span class="text-primary italic">DIGITAL</span> <br />
+                            REALMS
+                        </h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant max-w-lg leading-relaxed">
+                            Bridging the gap between cinematic storytelling and interactive performance. I build
+                            high-energy environments where every pixel serves a purpose, inspired by the aggressive
+                            elegance of Japanese media and the sleek precision of modern glassmorphism.
+                        </p>
+                        <div class="flex gap-4 mt-4">
+                            <button id="view-journey-btn"
+                                class="bg-primary text-on-primary font-label-sm text-label-sm px-8 py-4 rounded-full flex items-center gap-4 hover:scale-105 transition-transform group shadow-[0_0_20px_rgba(233,196,0,0.4)]">
+                                VIEW JOURNEY
+                                <div
+                                    class="w-8 h-8 rounded-full bg-on-primary/10 flex items-center justify-center group-hover:rotate-45 transition-transform">
+                                    <span class="material-symbols-outlined text-[18px]">arrow_outward</span>
                                 </div>
                             </button>
                         </div>
                     </div>
-                </div>
-
-                <!-- 2: System Archive -->
-                <div class="col-span-12 md:col-span-4 group project-card" data-project="system-archive">
-                    <div class="relative h-full rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
-                        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('assets/project-cyber-dashboard.jpg')"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent"></div>
-                        <div class="absolute bottom-0 left-0 p-gutter w-full">
-                            <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-6">
-                                <span class="material-symbols-outlined text-on-primary">settings_suggest</span>
-                            </div>
-                            <h3 class="font-headline-lg text-[32px] text-white leading-none mb-4 uppercase">SYSTEM<br/>ARCHIVE</h3>
-                            <p class="font-body-md text-on-surface-variant line-clamp-2 mb-6">
-                                A data-visualization project focused on character mechanical design blueprints.
-                            </p>
-                            <button type="button" class="project-open-btn w-full bg-surface-container-highest/50 backdrop-blur-xl border border-white/10 hover:border-primary transition-all py-4 rounded-full flex items-center justify-center gap-2 group/btn">
-                                <span class="font-label-sm text-white uppercase tracking-widest">Details</span>
-                                <span class="material-symbols-outlined text-primary text-[18px]">north_east</span>
-                            </button>
+                    <div class="col-span-12 lg:col-span-6 relative aspect-square group about-hero-image">
+                        <div
+                            class="absolute -inset-4 bg-primary/5 rounded-[40px] blur-3xl group-hover:bg-primary/10 transition-colors">
                         </div>
-                    </div>
-                </div>
-
-                <!-- 3: Digital Soul -->
-                <div class="col-span-12 md:col-span-4 group project-card" data-project="digital-soul">
-                    <div class="relative aspect-square rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
-                        <div class="absolute inset-0 bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-700" style="background-image: url('assets/project-developer.jpg')"></div>
-                        <div class="absolute inset-0 bg-primary/10 mix-blend-overlay"></div>
-                        <div class="absolute inset-0 bg-gradient-to-tr from-background/80 via-transparent to-transparent"></div>
-                        <div class="absolute top-6 right-6">
-                            <span class="font-label-sm text-[42px] text-primary/30 font-black tracking-tighter select-none">01</span>
-                        </div>
-                        <div class="absolute bottom-6 left-6 right-6">
-                            <h4 class="font-headline-lg text-headline-lg-mobile text-white mb-2 uppercase">DIGITAL SOUL</h4>
-                            <div class="h-1 w-0 bg-primary transition-all duration-500 group-hover:w-full"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4: Vibe Streamer -->
-                <div class="col-span-12 md:col-span-5 group project-card" data-project="vibe-streamer">
-                    <div class="relative h-full rounded-3xl overflow-hidden bg-surface-container-high/40 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
-                        <div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:scale-110 group-hover:opacity-40 transition-all duration-700" style="background-image: url('assets/project-music-platform.jpg')"></div>
-                        <div class="p-gutter h-full flex flex-col justify-between relative z-10">
-                            <div>
-                                <div class="flex items-center justify-between mb-8">
-                                    <span class="font-label-sm text-primary uppercase tracking-[0.3em]">Mobile App</span>
-                                    <span class="material-symbols-outlined text-on-surface-variant">devices</span>
+                        <div
+                            class="relative w-full h-full bg-surface-container/40 backdrop-blur-3xl rounded-[60px] border border-white/10 overflow-hidden shadow-2xl">
+                            <img class="w-full h-full object-cover mix-blend-luminosity hover:mix-blend-normal transition-all duration-700"
+                                alt="Portrait" src="assets/about-portrait.jpg" />
+                            <div
+                                class="absolute bottom-8 right-8 bg-surface-bright/80 backdrop-blur-xl p-6 rounded-3xl border border-white/20 flex flex-col gap-2">
+                                <span class="font-label-sm text-[10px] text-primary uppercase tracking-tighter">Current
+                                    Status</span>
+                                <span
+                                    class="font-headline-lg text-[24px] text-on-surface leading-none">STORYTELLING</span>
+                                <div class="flex gap-1">
+                                    <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                                    <div class="w-2 h-2 rounded-full bg-primary/40"></div>
+                                    <div class="w-2 h-2 rounded-full bg-primary/40"></div>
                                 </div>
-                                <h3 class="font-headline-lg text-[40px] text-white leading-tight mb-4 italic uppercase">Vibe<br/>Streamer</h3>
-                                <p class="font-body-md text-on-surface-variant max-w-[280px]">
-                                    Redesigning the streaming experience for the next generation of anime fans.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="relative px-container-padding page-subsection" id="about-details">
+                <div class="grid grid-cols-12 gap-gutter w-full py-24" id="journey-card">
+                    <div
+                        class="col-span-12 lg:col-span-8 bg-surface-container/20 backdrop-blur-2xl rounded-[40px] border border-white/5 p-12 flex flex-col gap-8 hover:bg-surface-container/30 transition-all reveal-card">
+                        <div class="flex justify-between items-start">
+                            <div class="flex flex-col gap-2">
+                                <h3 class="font-headline-lg text-headline-lg text-on-surface">My Journey</h3>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">2018 — PRESENT</span>
+                            </div>
+                            <span class="material-symbols-outlined text-primary text-[40px]">timeline</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                            <div class="flex flex-col gap-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary">auto_awesome</span>
+                                </div>
+                                <h4 class="font-body-md font-bold text-on-surface uppercase tracking-wider">The Spark
+                                </h4>
+                                <p class="text-on-surface-variant leading-relaxed">Starting in Tokyo's underground indie
+                                    scene, I focused on making web interfaces that felt as kinetic as the city itself.
                                 </p>
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="p-4 bg-surface-container rounded-2xl border border-white/5">
-                                    <div class="text-primary font-display-xl text-[32px] mb-1">98%</div>
-                                    <div class="font-label-sm text-on-surface-variant text-[10px] uppercase">Engagement</div>
+                            <div class="flex flex-col gap-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary">terminal</span>
                                 </div>
-                                <div class="p-4 bg-surface-container rounded-2xl border border-white/5">
-                                    <div class="text-white font-display-xl text-[32px] mb-1">2.4M</div>
-                                    <div class="font-label-sm text-on-surface-variant text-[10px] uppercase">Users</div>
-                                </div>
+                                <h4 class="font-body-md font-bold text-on-surface uppercase tracking-wider">The Fusion
+                                </h4>
+                                <p class="text-on-surface-variant leading-relaxed">Integrating heavy front-end
+                                    engineering with art-direction-led design to create seamless, immersive digital
+                                    experiences.</p>
                             </div>
+                        </div>
+                    </div>
+                    <div
+                        class="col-span-12 lg:col-span-4 bg-primary rounded-[40px] p-12 flex flex-col justify-between group overflow-hidden relative reveal-card">
+                        <div
+                            class="absolute -right-8 -top-8 text-[120px] font-display-xl text-on-primary/10 select-none group-hover:scale-110 transition-transform">
+                            01</div>
+                        <h3 class="font-headline-lg text-headline-lg text-on-primary z-10">THE<br />PHILOSOPHY</h3>
+                        <p class="font-body-md text-on-primary/80 z-10 mt-8 leading-relaxed">
+                            "Contrast is clarity. Luminance is direction. Movement is life." I believe every interaction
+                            should elicit a visceral response from the user.
+                        </p>
+                        <div class="mt-8 z-10 flex gap-2">
+                            <span
+                                class="px-4 py-2 bg-on-primary/10 rounded-full text-on-primary font-label-sm text-[10px] uppercase">Minimalism</span>
+                            <span
+                                class="px-4 py-2 bg-on-primary/10 rounded-full text-on-primary font-label-sm text-[10px] uppercase">Impact</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- 5: NEW — Autonomous Robotics -->
-                <div class="col-span-12 md:col-span-3 group project-card" data-project="robotics">
-                    <div class="relative h-full rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
-                        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('assets/project-robotics.jpg')"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent"></div>
-                        <div class="absolute bottom-0 left-0 p-gutter w-full">
-                            <span class="px-3 py-1 bg-primary/20 backdrop-blur-md border border-primary/30 rounded-full text-primary font-label-sm text-[10px] uppercase tracking-widest mb-4 inline-block">Systems</span>
-                            <h3 class="font-headline-lg text-[24px] text-white leading-none uppercase mt-2">Autonomous<br/>Robotics</h3>
-                        </div>
+                <div
+                    class="bg-surface-container/20 backdrop-blur-2xl rounded-[40px] border border-white/5 p-12 flex flex-col lg:flex-row gap-12 items-center reveal-card w-full mb-24">
+                    <div class="flex-1 flex flex-col gap-4">
+                        <h3 class="font-headline-lg text-headline-lg text-on-surface">The Arsenal</h3>
+                        <p class="text-on-surface-variant">A collection of tools and techniques refined over years of
+                            creative exploration.</p>
                     </div>
-                </div>
-
-                <!-- 6: NEW — Smart City Dashboard -->
-                <div class="col-span-12 md:col-span-4 group project-card" data-project="smart-city">
-                    <div class="relative h-full rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
-                        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('assets/project-smart-city.jpg')"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/10 to-transparent"></div>
-                        <div class="absolute bottom-0 left-0 p-gutter w-full">
-                            <span class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white font-label-sm text-[10px] uppercase tracking-widest mb-4 inline-block">Data Viz</span>
-                            <h3 class="font-headline-lg text-[24px] text-white leading-none uppercase mt-2">Smart City<br/>Dashboard</h3>
+                    <div class="flex-2 grid grid-cols-2 md:grid-cols-4 gap-6 w-full lg:w-auto">
+                        <div
+                            class="p-6 bg-surface-bright/30 rounded-3xl border border-white/5 text-center flex flex-col gap-2 hover:border-primary/50 transition-colors">
+                            <span class="font-label-sm text-primary">01</span>
+                            <span class="font-body-md text-on-surface font-bold">GSAP</span>
                         </div>
-                    </div>
-                </div>
-
-                <!-- 7: Creative Direction (also opens modal) -->
-                <div class="col-span-12 md:col-span-5 group project-card" data-project="creative-direction">
-                    <div class="relative h-full rounded-3xl overflow-hidden bg-primary p-gutter flex flex-col justify-between items-center text-center transition-transform duration-500 hover:rotate-1 cursor-pointer min-h-[220px]">
-                        <div class="w-24 h-24 bg-on-primary/10 rounded-full flex items-center justify-center backdrop-blur-md border border-on-primary/20 mt-8">
-                            <span class="material-symbols-outlined text-[48px] text-on-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                        <div
+                            class="p-6 bg-surface-bright/30 rounded-3xl border border-white/5 text-center flex flex-col gap-2 hover:border-primary/50 transition-colors">
+                            <span class="font-label-sm text-primary">02</span>
+                            <span class="font-body-md text-on-surface font-bold">THREE.JS</span>
                         </div>
-                        <div class="mb-8">
-                            <h3 class="font-headline-lg text-[24px] text-on-primary uppercase mb-2">Creative Direction</h3>
-                            <p class="font-label-sm text-on-primary/70 leading-relaxed">
-                                Crafting unique visual languages from scratch.
-                            </p>
+                        <div
+                            class="p-6 bg-surface-bright/30 rounded-3xl border border-white/5 text-center flex flex-col gap-2 hover:border-primary/50 transition-colors">
+                            <span class="font-label-sm text-primary">03</span>
+                            <span class="font-body-md text-on-surface font-bold">REACT</span>
                         </div>
-                        <button type="button" class="project-open-btn w-12 h-12 bg-on-primary rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
-                            <span class="material-symbols-outlined text-primary">add</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================================================================= -->
-        <!-- SECTION 4 : CONTACT  (shortened — no form, just details + resume)-->
-        <!-- ================================================================= -->
-        <section class="page-section relative min-h-screen w-full px-container-padding flex items-center overflow-hidden" id="contact-section">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter items-center w-full max-w-6xl mx-auto">
-
-                <div class="flex flex-col gap-8">
-                    <div class="flex flex-col gap-4">
-                        <span class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase">Connect / 接続</span>
-                        <h1 class="font-display-xl text-display-xl text-on-surface leading-none">
-                            GET IN <br/>
-                            <span class="text-primary-fixed-dim">TOUCH</span>
-                        </h1>
-                    </div>
-                    <p class="font-body-md text-body-md text-on-surface-variant max-w-sm">
-                        Whether you're looking to collaborate on a new project or just want to talk shop, I'm always open to new connections.
-                    </p>
-                    <a href="assets/resume.pdf" download class="group relative w-fit flex items-center gap-4 bg-primary text-on-primary font-label-sm text-label-sm px-8 py-4 rounded-full uppercase tracking-widest shadow-[0_10px_30px_rgba(233,196,0,0.3)] hover:shadow-[0_20px_40px_rgba(233,196,0,0.4)] transition-all active:scale-95">
-                        Get My Resume
-                        <div class="w-8 h-8 rounded-full bg-on-primary/20 flex items-center justify-center group-hover:translate-y-0.5 transition-transform">
-                            <span class="material-symbols-outlined text-[18px]">download</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="bg-surface-container/30 backdrop-blur-3xl rounded-[40px] border border-white/10 p-10 lg:p-12 relative overflow-hidden">
-                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 blur-[100px] rounded-full"></div>
-                    <div class="relative z-10 flex flex-col gap-6">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-full bg-surface-container-highest/50 flex items-center justify-center border border-white/10">
-                                <span class="material-symbols-outlined text-primary">mail</span>
-                            </div>
-                            <div>
-                                <p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Email</p>
-                                <p class="font-body-md text-body-md text-on-surface">rohit.vernekar05@gmail.com</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-full bg-surface-container-highest/50 flex items-center justify-center border border-white/10">
-                                <span class="material-symbols-outlined text-primary">location_on</span>
-                            </div>
-                            <div>
-                                <p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Location</p>
-                                <p class="font-body-md text-body-md text-on-surface">Bengaluru, India</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3 pt-4 border-t border-white/10">
-                            <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                            <span class="font-label-sm text-label-sm text-on-surface-variant">Available for new projects</span>
-                        </div>
-                        <div class="flex flex-wrap gap-2 pt-2">
-                            <span class="px-4 py-2 bg-white/5 rounded-full text-on-surface-variant font-label-sm text-[11px] uppercase hover:text-primary transition-colors cursor-pointer">GitHub</span>
-                            <span class="px-4 py-2 bg-white/5 rounded-full text-on-surface-variant font-label-sm text-[11px] uppercase hover:text-primary transition-colors cursor-pointer">LinkedIn</span>
-                            <span class="px-4 py-2 bg-white/5 rounded-full text-on-surface-variant font-label-sm text-[11px] uppercase hover:text-primary transition-colors cursor-pointer">Twitter / X</span>
+                        <div
+                            class="p-6 bg-surface-bright/30 rounded-3xl border border-white/5 text-center flex flex-col gap-2 hover:border-primary/50 transition-colors">
+                            <span class="font-label-sm text-primary">04</span>
+                            <span class="font-body-md text-on-surface font-bold">SHADERS</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
 
-    </main>
-</div>
+            <!-- ================================================================= -->
+            <!-- SECTION 3 : PROJECTS  (cards open a detail modal on click)       -->
+            <!-- ================================================================= -->
+            <section
+                class="page-section relative min-h-screen w-full px-container-padding py-32 flex flex-col justify-center overflow-hidden"
+                id="projects-section">
+                <div class="flex items-center gap-base mb-4">
+                    <span class="w-12 h-[2px] bg-primary"></span>
+                    <span class="font-label-sm text-label-sm text-primary uppercase tracking-[0.2em]">Selected Works
+                        2024</span>
+                </div>
+                <div class="flex justify-between items-end mb-16">
+                    <h1 class="font-display-xl text-display-xl text-on-surface uppercase tracking-tighter">
+                        Port<span class="text-primary italic">f</span>olio
+                    </h1>
+                    <div class="flex gap-gutter items-center mb-4">
+                        <div class="flex -space-x-4">
+                            <div
+                                class="w-10 h-10 rounded-full border-2 border-background bg-surface-container-high flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[14px]">psychology</span>
+                            </div>
+                            <div
+                                class="w-10 h-10 rounded-full border-2 border-background bg-surface-container-high flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[14px]">palette</span>
+                            </div>
+                            <div
+                                class="w-10 h-10 rounded-full border-2 border-background bg-primary flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[14px] text-on-primary">bolt</span>
+                            </div>
+                        </div>
+                        <p class="font-body-md text-on-surface-variant max-w-xs text-right leading-tight">
+                            Merging high-fidelity visuals with expressive interactive narratives.
+                        </p>
+                    </div>
+                </div>
 
-<!-- ============ PROJECT DETAIL MODAL ============ -->
-<div id="project-modal" class="fixed inset-0 z-[100] hidden items-center justify-center px-6">
-    <div id="project-modal-backdrop" class="absolute inset-0 bg-background/80 backdrop-blur-md"></div>
-    <div id="project-modal-panel" class="relative w-full max-w-3xl max-h-[85vh] overflow-y-auto bg-surface-container/95 backdrop-blur-2xl border border-white/10 rounded-[40px] p-10 lg:p-12">
-        <button id="project-modal-close" type="button" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/5 hover:bg-primary hover:text-on-primary flex items-center justify-center transition-colors">
-            <span class="material-symbols-outlined">close</span>
-        </button>
-        <div id="project-modal-image" class="w-full h-64 rounded-3xl bg-cover bg-center mb-8 border border-white/10"></div>
-        <span id="project-modal-tag" class="px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-primary font-label-sm text-[10px] uppercase tracking-widest inline-block mb-4"></span>
-        <h2 id="project-modal-title" class="font-headline-lg text-headline-lg text-on-surface mb-4"></h2>
-        <p id="project-modal-desc" class="font-body-md text-on-surface-variant leading-relaxed mb-6"></p>
-        <div id="project-modal-stack" class="flex flex-wrap gap-2"></div>
+                <div class="grid grid-cols-12 gap-gutter" id="project-grid">
+
+                    <!-- 1: Neon Genesis UI -->
+                    <div class="col-span-12 md:col-span-8 group project-card" data-project="neon-genesis">
+                        <div
+                            class="relative aspect-[16/9] rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                                style="background-image: url('assets/project-ai-assistant.jpg')"></div>
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80">
+                            </div>
+                            <div class="absolute bottom-0 left-0 p-gutter flex justify-between items-end w-full">
+                                <div class="space-y-2">
+                                    <div class="flex gap-2">
+                                        <span
+                                            class="px-3 py-1 bg-primary/20 backdrop-blur-md border border-primary/30 rounded-full text-primary font-label-sm text-[10px] uppercase tracking-widest">Case
+                                            Study</span>
+                                        <span
+                                            class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white font-label-sm text-[10px] uppercase tracking-widest">Interaction</span>
+                                    </div>
+                                    <h3 class="font-headline-lg text-headline-lg text-white">NEON GENESIS UI</h3>
+                                </div>
+                                <button type="button"
+                                    class="project-open-btn bg-white hover:bg-primary transition-all duration-300 px-8 py-4 rounded-full flex items-center gap-4 group/btn shadow-[0_10px_40px_rgba(0,0,0,0.3)]">
+                                    <span
+                                        class="font-label-sm text-on-background uppercase tracking-wider group-hover/btn:text-on-primary">View
+                                        Project</span>
+                                    <div
+                                        class="w-8 h-8 bg-primary rounded-full flex items-center justify-center group-hover/btn:bg-on-primary">
+                                        <span
+                                            class="material-symbols-outlined text-[18px] text-on-primary group-hover/btn:text-primary">arrow_forward</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2: System Archive -->
+                    <div class="col-span-12 md:col-span-4 group project-card" data-project="system-archive">
+                        <div
+                            class="relative h-full rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                                style="background-image: url('assets/project-cyber-dashboard.jpg')"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 p-gutter w-full">
+                                <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-6">
+                                    <span class="material-symbols-outlined text-on-primary">settings_suggest</span>
+                                </div>
+                                <h3 class="font-headline-lg text-[32px] text-white leading-none mb-4 uppercase">
+                                    SYSTEM<br />ARCHIVE</h3>
+                                <p class="font-body-md text-on-surface-variant line-clamp-2 mb-6">
+                                    A data-visualization project focused on character mechanical design blueprints.
+                                </p>
+                                <button type="button"
+                                    class="project-open-btn w-full bg-surface-container-highest/50 backdrop-blur-xl border border-white/10 hover:border-primary transition-all py-4 rounded-full flex items-center justify-center gap-2 group/btn">
+                                    <span class="font-label-sm text-white uppercase tracking-widest">Details</span>
+                                    <span class="material-symbols-outlined text-primary text-[18px]">north_east</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3: Digital Soul -->
+                    <div class="col-span-12 md:col-span-4 group project-card" data-project="digital-soul">
+                        <div
+                            class="relative aspect-square rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
+                            <div class="absolute inset-0 bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-700"
+                                style="background-image: url('assets/project-developer.jpg')"></div>
+                            <div class="absolute inset-0 bg-primary/10 mix-blend-overlay"></div>
+                            <div
+                                class="absolute inset-0 bg-gradient-to-tr from-background/80 via-transparent to-transparent">
+                            </div>
+                            <div class="absolute top-6 right-6">
+                                <span
+                                    class="font-label-sm text-[42px] text-primary/30 font-black tracking-tighter select-none">01</span>
+                            </div>
+                            <div class="absolute bottom-6 left-6 right-6">
+                                <h4 class="font-headline-lg text-headline-lg-mobile text-white mb-2 uppercase">DIGITAL
+                                    SOUL</h4>
+                                <div class="h-1 w-0 bg-primary transition-all duration-500 group-hover:w-full"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4: Vibe Streamer -->
+                    <div class="col-span-12 md:col-span-5 group project-card" data-project="vibe-streamer">
+                        <div
+                            class="relative h-full rounded-3xl overflow-hidden bg-surface-container-high/40 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
+                            <div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:scale-110 group-hover:opacity-40 transition-all duration-700"
+                                style="background-image: url('assets/project-music-platform.jpg')"></div>
+                            <div class="p-gutter h-full flex flex-col justify-between relative z-10">
+                                <div>
+                                    <div class="flex items-center justify-between mb-8">
+                                        <span class="font-label-sm text-primary uppercase tracking-[0.3em]">Mobile
+                                            App</span>
+                                        <span class="material-symbols-outlined text-on-surface-variant">devices</span>
+                                    </div>
+                                    <h3
+                                        class="font-headline-lg text-[40px] text-white leading-tight mb-4 italic uppercase">
+                                        Vibe<br />Streamer</h3>
+                                    <p class="font-body-md text-on-surface-variant max-w-[280px]">
+                                        Redesigning the streaming experience for the next generation of anime fans.
+                                    </p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-4 bg-surface-container rounded-2xl border border-white/5">
+                                        <div class="text-primary font-display-xl text-[32px] mb-1">98%</div>
+                                        <div class="font-label-sm text-on-surface-variant text-[10px] uppercase">
+                                            Engagement</div>
+                                    </div>
+                                    <div class="p-4 bg-surface-container rounded-2xl border border-white/5">
+                                        <div class="text-white font-display-xl text-[32px] mb-1">2.4M</div>
+                                        <div class="font-label-sm text-on-surface-variant text-[10px] uppercase">Users
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5: NEW — Autonomous Robotics -->
+                    <div class="col-span-12 md:col-span-3 group project-card" data-project="robotics">
+                        <div
+                            class="relative h-full rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                                style="background-image: url('assets/project-robotics.jpg')"></div>
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent">
+                            </div>
+                            <div class="absolute bottom-0 left-0 p-gutter w-full">
+                                <span
+                                    class="px-3 py-1 bg-primary/20 backdrop-blur-md border border-primary/30 rounded-full text-primary font-label-sm text-[10px] uppercase tracking-widest mb-4 inline-block">Systems</span>
+                                <h3 class="font-headline-lg text-[24px] text-white leading-none uppercase mt-2">
+                                    Autonomous<br />Robotics</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6: NEW — Smart City Dashboard -->
+                    <div class="col-span-12 md:col-span-4 group project-card" data-project="smart-city">
+                        <div
+                            class="relative h-full rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                                style="background-image: url('assets/project-smart-city.jpg')"></div>
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/10 to-transparent">
+                            </div>
+                            <div class="absolute bottom-0 left-0 p-gutter w-full">
+                                <span
+                                    class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white font-label-sm text-[10px] uppercase tracking-widest mb-4 inline-block">Data
+                                    Viz</span>
+                                <h3 class="font-headline-lg text-[24px] text-white leading-none uppercase mt-2">Smart
+                                    City<br />Dashboard</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7: Creative Direction (also opens modal) -->
+                    <div class="col-span-12 md:col-span-5 group project-card" data-project="creative-direction">
+                        <div
+                            class="relative h-full rounded-3xl overflow-hidden bg-primary p-gutter flex flex-col justify-between items-center text-center transition-transform duration-500 hover:rotate-1 cursor-pointer min-h-[220px]">
+                            <div
+                                class="w-24 h-24 bg-on-primary/10 rounded-full flex items-center justify-center backdrop-blur-md border border-on-primary/20 mt-8">
+                                <span class="material-symbols-outlined text-[48px] text-on-primary"
+                                    style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                            </div>
+                            <div class="mb-8">
+                                <h3 class="font-headline-lg text-[24px] text-on-primary uppercase mb-2">Creative
+                                    Direction</h3>
+                                <p class="font-label-sm text-on-primary/70 leading-relaxed">
+                                    Crafting unique visual languages from scratch.
+                                </p>
+                            </div>
+                            <button type="button"
+                                class="project-open-btn w-12 h-12 bg-on-primary rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-primary">add</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================================================================= -->
+            <!-- SECTION 4 : CONTACT  (shortened — no form, just details + resume)-->
+            <!-- ================================================================= -->
+            <section
+                class="page-section relative min-h-screen w-full px-container-padding flex items-center overflow-hidden"
+                id="contact-section">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter items-center w-full max-w-6xl mx-auto">
+
+                    <div class="flex flex-col gap-8">
+                        <div class="flex flex-col gap-4">
+                            <span
+                                class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase">Connect</span>
+                            <h1 class="font-display-xl text-display-xl text-on-surface leading-none">
+                                GET IN <br />
+                                <span class="text-primary-fixed-dim">TOUCH</span>
+                            </h1>
+                        </div>
+                        <p class="font-body-md text-body-md text-on-surface-variant max-w-sm">
+                            Whether you're looking to collaborate on a new project or just want to talk shop, I'm always
+                            open to new connections.
+                        </p>
+                        <a href="assets/Rohit R Vernekar - Resume.pdf" download
+                            class="group relative w-fit flex items-center gap-4 bg-primary text-on-primary font-label-sm text-label-sm px-8 py-4 rounded-full uppercase tracking-widest shadow-[0_10px_30px_rgba(233,196,0,0.3)] hover:shadow-[0_20px_40px_rgba(233,196,0,0.4)] transition-all active:scale-95">
+                            Get My Resume
+                            <div
+                                class="w-8 h-8 rounded-full bg-on-primary/20 flex items-center justify-center group-hover:translate-y-0.5 transition-transform">
+                                <span class="material-symbols-outlined text-[18px]">download</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div
+                        class="bg-surface-container/30 backdrop-blur-3xl rounded-[40px] border border-white/10 p-10 lg:p-12 relative overflow-hidden">
+                        <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 blur-[100px] rounded-full"></div>
+                        <div class="relative z-10 flex flex-col gap-6">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-12 h-12 rounded-full bg-surface-container-highest/50 flex items-center justify-center border border-white/10">
+                                    <span class="material-symbols-outlined text-primary">mail</span>
+                                </div>
+                                <div>
+                                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Email</p>
+                                    <p class="font-body-md text-body-md text-on-surface">rohit.vernekar05@gmail.com</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-12 h-12 rounded-full bg-surface-container-highest/50 flex items-center justify-center border border-white/10">
+                                    <span class="material-symbols-outlined text-primary">location_on</span>
+                                </div>
+                                <div>
+                                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Location
+                                    </p>
+                                    <p class="font-body-md text-body-md text-on-surface">Bengaluru, India</p>
+                                </div>
+                            </div>
+                            <!-- <div class="flex items-center gap-3 pt-4 border-t border-white/10"> -->
+                            <!-- <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div> -->
+                            <!-- <span class="font-label-sm text-label-sm text-on-surface-variant">Available for new -->
+                            <!-- projects</span> -->
+                            <!-- </div> -->
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <span
+                                    class="px-4 py-2 bg-white/5 rounded-full text-on-surface-variant font-label-sm text-[11px] uppercase hover:text-primary transition-colors cursor-pointer">GitHub</span>
+                                <span
+                                    class="px-4 py-2 bg-white/5 rounded-full text-on-surface-variant font-label-sm text-[11px] uppercase hover:text-primary transition-colors cursor-pointer">LinkedIn</span>
+                                <span
+                                    class="px-4 py-2 bg-white/5 rounded-full text-on-surface-variant font-label-sm text-[11px] uppercase hover:text-primary transition-colors cursor-pointer">Twitter
+                                    / X</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
     </div>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
-<script src="script.js"></script>
-<script type="module" src="app.js"></script>
+    <!-- ============ PROJECT DETAIL MODAL ============ -->
+    <div id="project-modal" class="fixed inset-0 z-[100] hidden items-center justify-center px-6">
+        <div id="project-modal-backdrop" class="absolute inset-0 bg-background/80 backdrop-blur-md"></div>
+        <div id="project-modal-panel"
+            class="relative w-full max-w-3xl max-h-[85vh] overflow-y-auto bg-surface-container/95 backdrop-blur-2xl border border-white/10 rounded-[40px] p-10 lg:p-12">
+            <button id="project-modal-close" type="button"
+                class="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/5 hover:bg-primary hover:text-on-primary flex items-center justify-center transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div id="project-modal-image"
+                class="w-full h-64 rounded-3xl bg-cover bg-center mb-8 border border-white/10"></div>
+            <span id="project-modal-tag"
+                class="px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-primary font-label-sm text-[10px] uppercase tracking-widest inline-block mb-4"></span>
+            <h2 id="project-modal-title" class="font-headline-lg text-headline-lg text-on-surface mb-4"></h2>
+            <p id="project-modal-desc" class="font-body-md text-on-surface-variant leading-relaxed mb-6"></p>
+            <div id="project-modal-stack" class="flex flex-wrap gap-2"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <script src="script.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
+
 </html>
