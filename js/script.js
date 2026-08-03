@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ==============================================================
-       4. CARD HOVER MICRO-INTERACTIONS
+       1. CARD HOVER MICRO-INTERACTIONS
        ============================================================== */
     document.querySelectorAll('.project-card, .project-hover-card').forEach(card => {
         card.addEventListener('mouseenter', () => {
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==============================================================
-       5. NAVIGATION — transition-driven active-state sync
+       2. NAVIGATION — transition-driven active-state sync
        ============================================================== */
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
@@ -112,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Reactively update nav bar active indicators based on current visible sections
     setTimeout(() => {
         if (window.sectionMgr) {
             window.sectionMgr.on('transitionStarted', ({ from, to }) => {
@@ -125,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
 
     /* ==============================================================
-       6. HERO CTA BUTTONS
+       3. HERO CTA BUTTONS
        ============================================================== */
     const exploreBtn = document.getElementById('explore-works-btn');
     if (exploreBtn) {
@@ -158,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ==============================================================
-       7. PROJECT MODAL — click any project card to open its details
+       4. PROJECT MODAL — click any project card to open its details
        ============================================================== */
     const modal = document.getElementById('project-modal');
     const modalBackdrop = document.getElementById('project-modal-backdrop');
@@ -220,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==============================================================
-       8. GLOBAL BACKGROUND — parallax mouse drift (ref.md)
+       5. GLOBAL BACKGROUND — parallax mouse drift (ref.md)
        ============================================================== */
     const scrubBg = document.getElementById('scrub-bg');
     if (scrubBg) {
@@ -239,11 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ==============================================================
-       9. SEQUENCE BUTTON & STUB
+       6. SEQUENCE BUTTON & STUB
        ============================================================== */
     window.sequence = function () {
         console.log('Sequence button triggered!');
-        // Sequence implementation stub
     };
 
     const tokenBtn = document.getElementById('nav-logo-token');

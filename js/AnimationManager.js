@@ -1,8 +1,7 @@
-// Optimized manager for entrance timelines configured per section
 export default class AnimationManager {
     constructor() {
-        this.timelines = new Map(); // sectionId -> timeline
-        this.resolves = new Map();  // sectionId -> Array of resolve functions
+        this.timelines = new Map();
+        this.resolves = new Map();
     }
 
     register(sectionId, selector, config = {}) {
@@ -12,9 +11,6 @@ export default class AnimationManager {
 
         const tl = gsap.timeline({ paused: true });
 
-        // Use a single tween with GSAP's optimized stagger feature.
-        // lazy: true defers DOM writes to reduce layout thrashing.
-        // overwrite: 'auto' prevents conflicting animations on the same elements.
         tl.fromTo(
             elements,
             { opacity: 0, y: 20 },
@@ -34,7 +30,7 @@ export default class AnimationManager {
     }
 
     registerTimeline(sectionId, tl) {
-        tl.pause(); // Ensure it starts paused
+        tl.pause();
         this.timelines.set(sectionId, tl);
     }
 
@@ -42,7 +38,6 @@ export default class AnimationManager {
         const tl = this.timelines.get(sectionId);
         if (!tl) return Promise.resolve();
 
-        // Ensure we initialize the list of resolves for this section
         if (!this.resolves.has(sectionId)) {
             this.resolves.set(sectionId, []);
         }
@@ -51,18 +46,14 @@ export default class AnimationManager {
             this.resolves.get(sectionId).push(resolve);
         });
 
-        // Set the completion callback to resolve all pending promises for this section
         tl.eventCallback('onComplete', () => {
             const list = this.resolves.get(sectionId) || [];
             this.resolves.set(sectionId, []);
             list.forEach(resolve => resolve());
         });
 
-        // Reset speed for forward entrance animation
         tl.timeScale(1.0);
 
-        // If the timeline is already actively running, do not interrupt it with restart().
-        // Let it run to completion for a smoother visual transition.
         if (tl.isActive()) {
             return promise;
         }
@@ -94,9 +85,6 @@ export default class AnimationManager {
             tl.timeScale(timeScale);
             tl.reverse();
         } else {
-            // When going up, we are at the top of the section.
-            // The timeline reverse starts at the bottom elements, delaying the exit of the top elements.
-            // To ensure the user sees an immediate exit, we manually fade/slide the entire section out.
             tl.pause();
             const sectionEl = document.getElementById(sectionId);
             if (sectionEl && window.gsap) {
@@ -112,7 +100,6 @@ export default class AnimationManager {
                     }
                 });
             } else {
-                // Fallback
                 tl.timeScale(timeScale * 1.5);
                 tl.reverse();
                 setTimeout(() => {

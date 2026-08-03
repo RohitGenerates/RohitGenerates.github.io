@@ -101,9 +101,6 @@
 
 <body class="bg-background font-body-md text-body-md text-on-surface antialiased">
 
-    <!-- ============ FIXED SCRUB BACKGROUND (image <-> video crossfade) ============ -->
-    <!-- This layer sits behind everything (z-0) and is full-viewport + fixed, so it
-     can be shown/hidden/crossfaded independently of page scroll position. -->
     <div id="scrub-bg" class="fixed inset-0 overflow-hidden pointer-events-none">
         <img id="scrub-bg-img" src="assets/hero-character.jpg" alt=""
             class="absolute inset-0 w-full h-full object-cover opacity-100" />
@@ -115,7 +112,6 @@
         <div class="absolute inset-0 bg-gradient-to-b from-background/60 via-background/70 to-background"></div>
     </div>
 
-    <!-- ============ FIXED SIDE NAV ============ -->
     <aside class="fixed left-gutter top-1/2 -translate-y-1/2 z-50 flex flex-col gap-base items-center">
         <div class="p-2 mb-4">
             <div id="nav-logo-token"
@@ -166,8 +162,7 @@
             <!-- ================================================================= -->
             <!-- SECTION 1 : HOME                                                 -->
             <!-- ================================================================= -->
-            <section class="page-section relative w-full overflow-hidden"
-                id="home-section">
+            <section class="page-section relative w-full overflow-hidden" id="home-section">
                 <div class="relative min-h-screen w-full flex items-center">
                     <div class="hero-content-wrapper h-full w-full flex flex-col items-center justify-center pt-20">
                         <div class="absolute inset-0 w-full flex items-center justify-center px-container-padding">
@@ -210,7 +205,8 @@
                                                 Explore Works
                                                 <div
                                                     class="w-8 h-8 rounded-full bg-on-primary/20 flex items-center justify-center group-hover:rotate-45 transition-transform">
-                                                    <span class="material-symbols-outlined text-[18px]">arrow_outward</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-[18px]">arrow_outward</span>
                                                 </div>
                                             </button>
                                             <button id="view-manifesto-btn"
@@ -235,7 +231,8 @@
                                                         class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">north_east</span>
                                                 </div>
                                                 <div>
-                                                    <div class="text-[32px] font-display-xl text-on-surface mb-1">24+</div>
+                                                    <div class="text-[32px] font-display-xl text-on-surface mb-1">24+
+                                                    </div>
                                                     <div
                                                         class="font-label-sm text-label-sm text-on-surface-variant uppercase">
                                                         Projects Completed</div>
@@ -249,12 +246,15 @@
                                                 <div class="flex justify-between items-start mb-8 relative z-10">
                                                     <div
                                                         class="w-12 h-12 rounded-2xl bg-on-primary/10 flex items-center justify-center">
-                                                        <span class="material-symbols-outlined text-on-primary">code</span>
+                                                        <span
+                                                            class="material-symbols-outlined text-on-primary">code</span>
                                                     </div>
                                                 </div>
                                                 <div class="relative z-10">
-                                                    <div class="text-[32px] font-display-xl text-on-primary mb-1">Tech</div>
-                                                    <div class="font-label-sm text-label-sm text-on-primary/70 uppercase">
+                                                    <div class="text-[32px] font-display-xl text-on-primary mb-1">Tech
+                                                    </div>
+                                                    <div
+                                                        class="font-label-sm text-label-sm text-on-primary/70 uppercase">
                                                         Full-Stack Mastery</div>
                                                 </div>
                                             </div>
@@ -293,13 +293,13 @@
                     </div>
                 </div>
 
-                <!-- Secondary showcase strip still belongs conceptually to Home -->
                 <div class="relative z-10 px-container-padding pb-32 pt-24 page-subsection" id="bento-section">
                     <div class="grid grid-cols-12 gap-gutter">
                         <div class="col-span-12 lg:col-span-8 group relative overflow-hidden rounded-[40px] h-[500px]">
                             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                                 style="background-image: url('assets/project-cyber-dashboard.jpg')"></div>
-                            <div class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent">
                             </div>
                             <div class="absolute bottom-0 left-0 p-10 flex flex-col items-start gap-4">
                                 <span
@@ -336,7 +336,8 @@
                                 <span
                                     class="text-on-surface-variant font-label-sm text-[11px] uppercase tracking-widest">Available
                                     for Freelance</span>
-                                <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#34d399]">
+                                <div
+                                    class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#34d399]">
                                 </div>
                             </div>
                         </div>
@@ -347,9 +348,7 @@
             <!-- ================================================================= -->
             <!-- SECTION 2 : ABOUT                                                -->
             <!-- ================================================================= -->
-            <section
-                class="page-section relative w-full overflow-hidden"
-                id="about-section">
+            <section class="page-section relative w-full overflow-hidden" id="about-section">
                 <div class="relative min-h-screen w-full px-container-padding flex items-center">
                     <div class="grid grid-cols-12 gap-gutter items-center w-full">
                         <div class="col-span-12 lg:col-span-6 flex flex-col items-start gap-8 z-10 about-hero-text">
@@ -389,7 +388,8 @@
                                     alt="Portrait" src="assets/about-portrait.jpg" />
                                 <div
                                     class="absolute bottom-8 right-8 bg-surface-bright/80 backdrop-blur-xl p-6 rounded-3xl border border-white/20 flex flex-col gap-2">
-                                    <span class="font-label-sm text-[10px] text-primary uppercase tracking-tighter">Current
+                                    <span
+                                        class="font-label-sm text-[10px] text-primary uppercase tracking-tighter">Current
                                         Status</span>
                                     <span
                                         class="font-headline-lg text-[24px] text-on-surface leading-none">STORYTELLING</span>
@@ -404,7 +404,6 @@
                     </div>
                 </div>
 
-                <!-- Journey detail card still belongs conceptually to About -->
                 <div class="relative px-container-padding page-subsection" id="about-details">
                     <div class="grid grid-cols-12 gap-gutter w-full py-24" id="journey-card">
                         <div
@@ -412,7 +411,8 @@
                             <div class="flex justify-between items-start">
                                 <div class="flex flex-col gap-2">
                                     <h3 class="font-headline-lg text-headline-lg text-on-surface">My Journey</h3>
-                                    <span class="font-label-sm text-label-sm text-on-surface-variant">2018 — PRESENT</span>
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant">2018 —
+                                        PRESENT</span>
                                 </div>
                                 <span class="material-symbols-outlined text-primary text-[40px]">timeline</span>
                             </div>
@@ -421,17 +421,21 @@
                                     <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
                                         <span class="material-symbols-outlined text-primary">auto_awesome</span>
                                     </div>
-                                    <h4 class="font-body-md font-bold text-on-surface uppercase tracking-wider">The Spark
+                                    <h4 class="font-body-md font-bold text-on-surface uppercase tracking-wider">The
+                                        Spark
                                     </h4>
-                                    <p class="text-on-surface-variant leading-relaxed">Starting in Tokyo's underground indie
-                                        scene, I focused on making web interfaces that felt as kinetic as the city itself.
+                                    <p class="text-on-surface-variant leading-relaxed">Starting in Tokyo's underground
+                                        indie
+                                        scene, I focused on making web interfaces that felt as kinetic as the city
+                                        itself.
                                     </p>
                                 </div>
                                 <div class="flex flex-col gap-4">
                                     <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
                                         <span class="material-symbols-outlined text-primary">terminal</span>
                                     </div>
-                                    <h4 class="font-body-md font-bold text-on-surface uppercase tracking-wider">The Fusion
+                                    <h4 class="font-body-md font-bold text-on-surface uppercase tracking-wider">The
+                                        Fusion
                                     </h4>
                                     <p class="text-on-surface-variant leading-relaxed">Integrating heavy front-end
                                         engineering with art-direction-led design to create seamless, immersive digital
@@ -446,7 +450,8 @@
                                 01</div>
                             <h3 class="font-headline-lg text-headline-lg text-on-primary z-10">THE<br />PHILOSOPHY</h3>
                             <p class="font-body-md text-on-primary/80 z-10 mt-8 leading-relaxed">
-                                "Contrast is clarity. Luminance is direction. Movement is life." I believe every interaction
+                                "Contrast is clarity. Luminance is direction. Movement is life." I believe every
+                                interaction
                                 should elicit a visceral response from the user.
                             </p>
                             <div class="mt-8 z-10 flex gap-2">
@@ -462,7 +467,8 @@
                         class="bg-surface-container/20 backdrop-blur-2xl rounded-[40px] border border-white/5 p-12 flex flex-col lg:flex-row gap-12 items-center reveal-card w-full mb-24">
                         <div class="flex-1 flex flex-col gap-4">
                             <h3 class="font-headline-lg text-headline-lg text-on-surface">The Arsenal</h3>
-                            <p class="text-on-surface-variant">A collection of tools and techniques refined over years of
+                            <p class="text-on-surface-variant">A collection of tools and techniques refined over years
+                                of
                                 creative exploration.</p>
                         </div>
                         <div class="flex-2 grid grid-cols-2 md:grid-cols-4 gap-6 w-full lg:w-auto">
@@ -765,11 +771,6 @@
                                     <p class="font-body-md text-body-md text-on-surface">Bengaluru, India</p>
                                 </div>
                             </div>
-                            <!-- <div class="flex items-center gap-3 pt-4 border-t border-white/10"> -->
-                            <!-- <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div> -->
-                            <!-- <span class="font-label-sm text-label-sm text-on-surface-variant">Available for new -->
-                            <!-- projects</span> -->
-                            <!-- </div> -->
                             <div class="flex flex-wrap gap-2 pt-2">
                                 <span
                                     class="px-4 py-2 bg-white/5 rounded-full text-on-surface-variant font-label-sm text-[11px] uppercase hover:text-primary transition-colors cursor-pointer">GitHub</span>
@@ -809,8 +810,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
-    <script src="script.js"></script>
-    <script type="module" src="app.js"></script>
+    <script src="js/script.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 
 </html>

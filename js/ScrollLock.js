@@ -1,9 +1,7 @@
-// Global scroll lock to prevent any scrolling while a transition is active
 export default class ScrollLock {
     constructor() {
         this.locked = false;
         this._onKeydown = this._onKeydown.bind(this);
-        // Listen only to keydown to negate manual scroll during lock
         window.addEventListener('keydown', this._onKeydown, { passive: false });
     }
 

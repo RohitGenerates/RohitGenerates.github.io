@@ -1,11 +1,8 @@
-// Entry point – wires together the managers and initialises the site
 import SectionManager from './SectionManager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Create SectionManager
     const sectionMgr = new SectionManager();
 
-    // Register only the 4 main sections (subsections are physically grouped inside them)
     const sectionOrder = [
         'home-section',
         'about-section',
@@ -14,10 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     sectionMgr.registerSections(sectionOrder);
 
-    // Register custom entrance timelines for programmatic lock/unlock and flawless execution
     const { gsap } = window;
 
-    // 1. Home Section Entrance Timeline (includes Bento animation)
+    // 1. Home Section Entrance Timeline
     const homeTl = gsap.timeline();
     homeTl
         .fromTo('#main-glass', { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out' })
@@ -30,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, '-=0.4');
     sectionMgr.animationManager.registerTimeline('home-section', homeTl);
 
-    // 2. About Section Entrance Timeline (includes About Details animation)
+    // 2. About Section Entrance Timeline
     const aboutTl = gsap.timeline();
     aboutTl
         .fromTo('.about-hero-text > *', { y: 50, opacity: 0 }, {
@@ -65,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.sectionMgr = sectionMgr;
 
-    // Play initial entrance animation and unlock scrolllock
     sectionMgr.animationManager.play('home-section').then(() => {
         sectionMgr.scrollLock.unlock();
     });

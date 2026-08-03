@@ -1,4 +1,3 @@
-// Lightweight pub‑sub implementation used by transition manager
 export default class EventEmitter {
     constructor() {
         this.listeners = new Map();
@@ -9,7 +8,7 @@ export default class EventEmitter {
             this.listeners.set(event, []);
         }
         this.listeners.get(event).push(callback);
-        return this; // chainable
+        return this;
     }
 
     emit(event, payload) {

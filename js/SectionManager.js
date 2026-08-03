@@ -1,6 +1,3 @@
-// SectionManager observes scroll boundaries using wheel/touch events and orchestrates
-// transitions and entrance animations.
-
 import TransitionManager from './TransitionManager.js';
 import AnimationManager from './AnimationManager.js';
 import ScrollLock from './ScrollLock.js';
@@ -11,25 +8,22 @@ const { gsap } = window;
 export default class SectionManager {
     constructor() {
         this.emitter = new EventEmitter();
-        this.sections = []; // Array of {id, el}
+        this.sections = [];
         this.currentIndex = 0;
         this.scrollLock = new ScrollLock();
-        this.scrollLock.lock(); // Lock initially until home animation finishes
+        this.scrollLock.lock();
         this.transitionManager = new TransitionManager(this.scrollLock);
         this.animationManager = new AnimationManager();
 
-        // Forward transition events downstream for other subsystems
         this.transitionManager.on('transitionStarted', data => {
             this.emitter.emit('transitionStarted', data);
         });
         this.transitionManager.on('transitionFinished', data => this.emitter.emit('transitionFinished', data));
 
-        // Handle completion locally
         this.emitter.on('transitionFinished', data => this._onTransitionFinished(data));
 
         this.touchStartY = 0;
 
-        // Bind events
         this._onWheel = this._onWheel.bind(this);
         this._onTouchStart = this._onTouchStart.bind(this);
         this._onTouchMove = this._onTouchMove.bind(this);
@@ -39,16 +33,14 @@ export default class SectionManager {
         window.addEventListener('touchmove', this._onTouchMove, { passive: false });
     }
 
-    /* PUBLIC */
     on(event, cb) { this.emitter.on(event, cb); }
 
     registerSections(sectionIds) {
         this.sections = sectionIds.map(id => ({ id, el: document.getElementById(id) }));
-        // Ensure each section has a data attribute for root detection
         this.sections.forEach((s, i) => {
             s.el.dataset.sectionIndex = i;
             if (i !== this.currentIndex) {
-                s.el.style.display = 'none'; // Unload inactive sections
+                s.el.style.display = 'none';
             }
         });
     }
@@ -69,14 +61,12 @@ export default class SectionManager {
 
         this.currentIndex = targetIdx;
 
-        // Lock scroll immediately while we animate the exit
         this.scrollLock.lock();
 
         let unloadTimeScale = opts.unloadTimeScale;
         if (unloadTimeScale === undefined) {
             const tl = this.animationManager.timelines.get(fromSec.id);
             if (tl) {
-                // Keep exit duration consistent at ~1.3s (the going down speed of Home)
                 unloadTimeScale = tl.duration() / 1.3;
                 unloadTimeScale = Math.max(1.0, Math.min(2.5, unloadTimeScale));
             } else {
@@ -84,30 +74,22 @@ export default class SectionManager {
             }
         }
 
-        // Start reversing the elements of the current section immediately (no waiting!)
         this.animationManager.unload(fromSec.id, unloadTimeScale, isGoingDown);
 
-        // Play the fullscreen transition immediately
         this.transitionManager.play(fromSec.id, toSec.id, {
             ...opts,
             onMidpoint: () => {
-                // Midpoint: screen is covered by opaque video.
-                // Load target section in DOM flow now that screen is covered
                 toSec.el.style.display = '';
 
-                // Safely hide the old section
                 fromSec.el.style.display = 'none';
 
-                // Reset section wrapper styling in case it was custom-faded during going up
                 gsap.set(fromSec.el, { opacity: 1, y: 0 });
 
-                // Force reset the timeline to start so it is clean for next entry
                 const fromTl = this.animationManager.timelines.get(fromSec.id);
                 if (fromTl) {
                     fromTl.progress(0).pause();
                 }
 
-                // If a sub-element ID was specified, scroll to its absolute top offset
                 if (opts.scrollToId) {
                     const targetSubEl = document.getElementById(opts.scrollToId);
                     if (targetSubEl) {
@@ -156,14 +138,12 @@ export default class SectionManager {
 
         if (isScrollingDown) {
             if (!isAtBottom) {
-                // Let normal browser scrolling happen inside the section
                 return;
             }
             e.preventDefault();
             this.goToNextSection();
         } else {
             if (!isAtTop) {
-                // Let normal browser scrolling happen inside the section
                 return;
             }
             e.preventDefault();
@@ -182,19 +162,19 @@ export default class SectionManager {
         }
 
         const touchY = e.touches[0].clientY;
-        const deltaY = this.touchStartY - touchY; // positive deltaY = swipe up (scrolling down)
-        if (Math.abs(deltaY) < 10) return; // ignore minor drifts
+        const deltaY = this.touchStartY - touchY;
+        if (Math.abs(deltaY) < 10) return;
 
         const isScrollingDown = deltaY > 0;
         const isAtBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 5;
         const isAtTop = window.scrollY <= 5;
 
         if (isScrollingDown) {
-            if (!isAtBottom) return; // let natural touch scroll occur
+            if (!isAtBottom) return;
             e.preventDefault();
             this.goToNextSection();
         } else {
-            if (!isAtTop) return; // let natural touch scroll occur
+            if (!isAtTop) return;
             e.preventDefault();
             this.goToPrevSection();
         }
@@ -203,13 +183,11 @@ export default class SectionManager {
     _onTransitionFinished({ from, to }) {
         const target = this.sections.find(s => s.id === to);
         if (!target) {
-            // Unlocked if target not registered
             this.scrollLock.unlock();
             this.transitionManager.isTransitioning = false;
             return;
         }
 
-        // Reveal target immediately
         gsap.to(target.el, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power2.out' });
 
         this.animationManager.play(to).then(() => {
