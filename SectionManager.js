@@ -70,10 +70,22 @@ export default class SectionManager {
         // Lock scroll immediately while we animate the exit
         this.scrollLock.lock();
 
-        const unloadTimeScale = opts.unloadTimeScale ?? 2.5;
+        let unloadTimeScale = opts.unloadTimeScale;
+        if (unloadTimeScale === undefined) {
+            const tl = this.animationManager.timelines.get(fromSec.id);
+            if (tl) {
+                // Keep exit duration consistent at ~1.3s (the going down speed of Home)
+                unloadTimeScale = tl.duration() / 1.3;
+                unloadTimeScale = Math.max(1.0, Math.min(2.5, unloadTimeScale));
+            } else {
+                unloadTimeScale = 2.5;
+            }
+        }
+
+        const isGoingDown = targetIdx > this.currentIndex;
 
         // Start reversing the elements of the current section immediately (no waiting!)
-        this.animationManager.unload(fromSec.id, unloadTimeScale);
+        this.animationManager.unload(fromSec.id, unloadTimeScale, isGoingDown);
 
         // Load target section in DOM flow immediately
         toSec.el.style.display = '';
