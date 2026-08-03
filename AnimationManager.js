@@ -71,7 +71,7 @@ export default class AnimationManager {
         return promise;
     }
 
-    unload(sectionId, timeScale = 2.5) {
+    unload(sectionId, timeScale = 2.5, isGoingDown = true) {
         const tl = this.timelines.get(sectionId);
         if (!tl) return Promise.resolve();
 
@@ -83,14 +83,45 @@ export default class AnimationManager {
             this.resolves.get(sectionId).push(resolve);
         });
 
-        tl.eventCallback('onReverseComplete', () => {
-            const list = this.resolves.get(sectionId) || [];
-            this.resolves.set(sectionId, []);
-            list.forEach(resolve => resolve());
-        });
+        if (isGoingDown) {
+            tl.eventCallback('onReverseComplete', () => {
+                const list = this.resolves.get(sectionId) || [];
+                this.resolves.set(sectionId, []);
+                list.forEach(resolve => resolve());
+                tl.eventCallback('onReverseComplete', null);
+            });
 
-        tl.timeScale(timeScale);
-        tl.reverse();
+            tl.timeScale(timeScale);
+            tl.reverse();
+        } else {
+            // When going up, we are at the top of the section.
+            // The timeline reverse starts at the bottom elements, delaying the exit of the top elements.
+            // To ensure the user sees an immediate exit, we manually fade/slide the entire section out.
+            tl.pause();
+            const sectionEl = document.getElementById(sectionId);
+            if (sectionEl && window.gsap) {
+                window.gsap.to(sectionEl, {
+                    opacity: 0,
+                    y: 30,
+                    duration: 0.8,
+                    ease: 'power2.out',
+                    onComplete: () => {
+                        const list = this.resolves.get(sectionId) || [];
+                        this.resolves.set(sectionId, []);
+                        list.forEach(resolve => resolve());
+                    }
+                });
+            } else {
+                // Fallback
+                tl.timeScale(timeScale * 1.5);
+                tl.reverse();
+                setTimeout(() => {
+                    const list = this.resolves.get(sectionId) || [];
+                    this.resolves.set(sectionId, []);
+                    list.forEach(resolve => resolve());
+                }, 800);
+            }
+        }
 
         return promise;
     }

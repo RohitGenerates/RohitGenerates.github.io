@@ -65,6 +65,8 @@ export default class SectionManager {
         const fromSec = this.sections[this.currentIndex];
         const toSec = this.sections[targetIdx];
 
+        const isGoingDown = targetIdx > this.currentIndex;
+
         this.currentIndex = targetIdx;
 
         // Lock scroll immediately while we animate the exit
@@ -82,21 +84,22 @@ export default class SectionManager {
             }
         }
 
-        const isGoingDown = targetIdx > this.currentIndex;
-
         // Start reversing the elements of the current section immediately (no waiting!)
         this.animationManager.unload(fromSec.id, unloadTimeScale, isGoingDown);
-
-        // Load target section in DOM flow immediately
-        toSec.el.style.display = '';
 
         // Play the fullscreen transition immediately
         this.transitionManager.play(fromSec.id, toSec.id, {
             ...opts,
             onMidpoint: () => {
                 // Midpoint: screen is covered by opaque video.
+                // Load target section in DOM flow now that screen is covered
+                toSec.el.style.display = '';
+
                 // Safely hide the old section
                 fromSec.el.style.display = 'none';
+
+                // Reset section wrapper styling in case it was custom-faded during going up
+                gsap.set(fromSec.el, { opacity: 1, y: 0 });
 
                 // Force reset the timeline to start so it is clean for next entry
                 const fromTl = this.animationManager.timelines.get(fromSec.id);
