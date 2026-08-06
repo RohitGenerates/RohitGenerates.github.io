@@ -6,54 +6,36 @@ document.addEventListener('DOMContentLoaded', () => {
        ============================================================== */
     const projectsData = {
         'neon-genesis': {
-            tag: 'Case Study / Interaction',
-            title: 'Neon Genesis UI',
-            image: 'assets/project-ai-assistant.jpg',
-            desc: 'An interaction-first interface exploring how conversational AI can feel alive on screen — layered holographic panels, ambient audio-reactive glows, and micro-feedback on every input.',
-            stack: ['TypeScript', 'Three.js', 'WebGL', 'GSAP']
+            tag: 'Major Project / Security',
+            title: 'NeuralArmor',
+            image: 'assets/project-neuralmor.jpg',
+            desc: 'Model-agnostic security reverse proxy for autonomous perception systems. Engineered in FastAPI with a CVPR 2025 Adversarial Consistency Distillation purifier, achieving 98% latency reduction (5s → 0.1s). Red Teaming scanner using ART against PGD/FGSM attacks with Grad-CAM XAI forensic visualization.',
+            stack: ['FastAPI', 'Python', 'ART', 'CVPR 2025', 'Grad-CAM XAI']
         },
         'system-archive': {
-            tag: 'Data Visualization',
-            title: 'System Archive',
-            image: 'assets/project-cyber-dashboard.jpg',
-            desc: 'A data-visualization project focused on character mechanical design blueprints — turning static schematics into an explorable, filterable archive.',
-            stack: ['React', 'D3.js', 'Node.js']
+            tag: 'Academic / Privacy',
+            title: 'Digital Footprint Analyzer',
+            image: 'assets/project-privacy-audit.jpg',
+            desc: 'Real-time web privacy risk auditor built with mitmproxy, Flask, and a Manifest V3 Chrome extension. Tracks fingerprinting signals and cookies to compute live 0–100 domain risk scores via non-intrusive network analysis and PostgreSQL visualization.',
+            stack: ['Python', 'Flask', 'mitmproxy', 'PostgreSQL', 'Chrome Extension']
         },
         'digital-soul': {
-            tag: 'Personal / Systems',
-            title: 'Digital Soul',
-            image: 'assets/project-developer.jpg',
-            desc: 'A personal workspace dashboard built to track deep-work sessions, project momentum, and creative output over time.',
-            stack: ['Next.js', 'Tailwind', 'SQLite']
+            tag: 'Hackathon / 2nd Place',
+            title: 'ConnectNet',
+            image: 'assets/project-connectnet.jpg',
+            desc: 'Offline-first emergency rescue platform built in 6 hours at VIDYUT 2K25. Utilizes BLE/Wi-Fi Direct mesh networking with Room DB and Firebase for live SOS alert synchronization on a Google Maps dashboard—entirely offline-capable.',
+            stack: ['Android', 'Kotlin', 'Room DB', 'Firebase', 'Google Maps']
         },
         'vibe-streamer': {
-            tag: 'Mobile App',
-            title: 'Vibe Streamer',
-            image: 'assets/project-music-platform.jpg',
-            desc: 'Redesigning the streaming experience for the next generation of anime fans — gesture-first navigation, live watch parties, and a queue that adapts to mood.',
-            stack: ['Kotlin', 'Jetpack Compose', 'Firebase']
+            tag: 'Research / Publication',
+            title: 'Multi-Vector Guardrails',
+            image: 'assets/project-research.jpg',
+            desc: 'Peer-reviewed book chapter in IIP Proceedings Vol 6, Book 2. Authored original research on Knowledge Engineering for autonomous systems, proposing a dual-path processing architecture (Probabilistic AI vs. Deterministic Backend) for ethical alignment grounded in NeuralArmor empirical data.',
+            stack: ['Research', 'Knowledge Engineering', 'Autonomous Systems']
         },
-        'robotics': {
-            tag: 'Systems / Robotics',
-            title: 'Autonomous Robotics Framework',
-            image: 'assets/project-robotics.jpg',
-            desc: 'A modular control framework for autonomous ground units — sensor fusion, path planning, and a real-time telemetry dashboard for monitoring fleet behavior.',
-            stack: ['Python', 'ROS2', 'C++', 'OpenCV']
-        },
-        'smart-city': {
-            tag: 'Data Viz / Infrastructure',
-            title: 'Smart City Dashboard',
-            image: 'assets/project-smart-city.jpg',
-            desc: 'A city-scale monitoring dashboard aggregating traffic, air quality, and energy data into a single live operations view for municipal planners.',
-            stack: ['Vue', 'MapboxGL', 'PostgreSQL']
-        },
-        'creative-direction': {
-            tag: 'Direction',
-            title: 'Creative Direction',
-            image: 'assets/project-cyber-dashboard.jpg',
-            desc: 'Crafting unique visual languages from scratch — art direction, motion systems, and design tokens built for teams shipping high-energy interactive products.',
-            stack: ['Figma', 'After Effects', 'Design Systems']
-        }
+        'robotics': null,
+        'smart-city': null,
+        'creative-direction': null
     };
 
     /* ==============================================================
