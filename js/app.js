@@ -61,7 +61,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.sectionMgr = sectionMgr;
 
-    sectionMgr.animationManager.play('home-section').then(() => {
-        sectionMgr.scrollLock.unlock();
-    });
+    sectionMgr.animationManager.play('home-section');
 });

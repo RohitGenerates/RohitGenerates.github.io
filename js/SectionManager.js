@@ -11,7 +11,6 @@ export default class SectionManager {
         this.sections = [];
         this.currentIndex = 0;
         this.scrollLock = new ScrollLock();
-        this.scrollLock.lock();
         this.transitionManager = new TransitionManager(this.scrollLock);
         this.animationManager = new AnimationManager();
 
@@ -190,9 +189,8 @@ export default class SectionManager {
 
         gsap.to(target.el, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power2.out' });
 
-        this.animationManager.play(to).then(() => {
-            this.scrollLock.unlock();
-            this.transitionManager.isTransitioning = false;
-        });
+        this.scrollLock.unlock();
+        this.transitionManager.isTransitioning = false;
+        this.animationManager.play(to);
     }
 }
