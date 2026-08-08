@@ -171,12 +171,15 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('flex');
         document.body.style.overflow = 'hidden';
 
+        window.sectionMgr?.setScrollEnabled(false);
+
         gsap.fromTo(modalBackdrop, { opacity: 0 }, { opacity: 1, duration: 0.3 });
         gsap.fromTo(modalPanel, { opacity: 0, y: 40, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'power3.out' });
     }
 
     function closeProjectModal() {
         if (!modal) return;
+        window.sectionMgr?.setScrollEnabled(true);
         gsap.to(modalPanel, { opacity: 0, y: 20, scale: 0.97, duration: 0.25, ease: 'power2.in' });
         gsap.to(modalBackdrop, {
             opacity: 0, duration: 0.25, onComplete: () => {
