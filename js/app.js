@@ -3,6 +3,21 @@ import SectionManager from './SectionManager.js';
 document.addEventListener('DOMContentLoaded', () => {
     const sectionMgr = new SectionManager();
 
+    // 0. Email Copy
+    const email = document.getElementById('email-copy');
+    email.addEventListener('click', async () => {
+        const originalText = email.textContent.trim();
+        try {
+            await navigator.clipboard.writeText(originalText);
+            email.textContent = 'Copied!';
+            setTimeout(() => {
+                email.textContent = originalText;
+            }, 1500);
+        } catch (error) {
+            console.error('Failed to copy email:', error);
+        }
+    });
+
     const sectionOrder = [
         'home-section',
         'about-section',
@@ -52,11 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
     sectionMgr.animationManager.registerTimeline('projects-section', projectsTl);
 
     // 4. Contact Section Entrance Timeline
-    const contactTl = gsap.timeline();
+    const contactTl = gsap.timeline({ paused: true });
     contactTl
-        .fromTo('#contact-section h1', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power4.out' })
-        .fromTo('#contact-section p', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.6')
-        .fromTo('#contact-section .bg-surface-container', { scale: 0.95, opacity: 0 }, { scale: 1, opacity: 1, duration: 1, ease: 'expo.out' }, '-=0.4');
+        .fromTo('#contact-section .grid > div:first-child > *', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1, stagger: 0.15, ease: 'power4.out' })
+        .fromTo('#contact-section .grid > div:last-child', { scale: 0.95, opacity: 0 }, { scale: 1, opacity: 1, duration: 1, ease: 'expo.out' }, '-=0.6');
     sectionMgr.animationManager.registerTimeline('contact-section', contactTl);
 
     window.sectionMgr = sectionMgr;
