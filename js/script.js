@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         exploreBtn.addEventListener('click', () => {
             if (window.sectionMgr) {
                 const targetIdx = window.sectionMgr.sections.findIndex(s => s.id === 'projects-section');
-                if (targetIdx !== -1) window.sectionMgr.goToSection(targetIdx);
+                if (targetIdx !== -1) window.sectionMgr.goToSection(targetIdx, { duration: 1.5, unloadTimeScale: 5 });
             }
         });
     }
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         manifestoBtn.addEventListener('click', () => {
             if (window.sectionMgr) {
                 const targetIdx = window.sectionMgr.sections.findIndex(s => s.id === 'about-section');
-                if (targetIdx !== -1) window.sectionMgr.goToSection(targetIdx, { scrollToId: 'about-details' });
+                if (targetIdx !== -1) window.sectionMgr.goToSection(targetIdx, { duration: 1.5, unloadTimeScale: 5, scrollToId: 'about-details' });
             }
         });
     }
@@ -133,7 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
         journeyBtn.addEventListener('click', () => {
             if (window.sectionMgr) {
                 const targetIdx = window.sectionMgr.sections.findIndex(s => s.id === 'about-section');
-                if (targetIdx !== -1) window.sectionMgr.goToSection(targetIdx, { scrollToId: 'journey-card' });
+                if (window.sectionMgr.currentIndex === targetIdx) {
+                    gsap.to(window, { duration: 1, scrollTo: '#about-details', ease: 'power2.out' });
+                } else if (targetIdx !== -1) {
+                    window.sectionMgr.goToSection(targetIdx, { duration: 1.5, unloadTimeScale: 5, scrollToId: 'about-details' });
+                }
             }
         });
     }
