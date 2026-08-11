@@ -31,6 +31,7 @@ export default class TransitionManager {
 
         const imgEl = document.getElementById('scrub-bg-img');
         const vidEl = document.getElementById('scrub-bg-video');
+        const canvasEl = document.getElementById('particles-canvas');
 
         if (!imgEl || !vidEl) {
             console.warn('TransitionManager: Required elements missing');
@@ -56,10 +57,12 @@ export default class TransitionManager {
 
         tl.set(imgEl, { opacity: 1 });
         tl.set(vidEl, { opacity: 0, zIndex: 100 });
+        if (canvasEl) tl.set(canvasEl, { opacity: 1 });
 
         // Phase 1 – bring video to front, fade it in
         tl.to(vidEl, { duration: mid, opacity: 1, ease: 'power1.inOut' }, 0);
         tl.to(imgEl, { duration: mid, opacity: 0, ease: 'power1.inOut' }, 0);
+        if (canvasEl) tl.to(canvasEl, { duration: mid, opacity: 0, ease: 'power1.inOut' }, 0);
 
         // Scroll or run custom layout action at midpoint (obscured viewport)
         tl.call(() => {
@@ -73,6 +76,7 @@ export default class TransitionManager {
         // Phase 2 – fade back to image
         tl.to(vidEl, { duration: duration - mid, opacity: 0, ease: 'power1.inOut' }, mid);
         tl.to(imgEl, { duration: duration - mid, opacity: 1, ease: 'power1.inOut' }, mid);
+        if (canvasEl) tl.to(canvasEl, { duration: duration - mid, opacity: 1, ease: 'power1.inOut' }, mid);
 
         tl.set(vidEl, { zIndex: 0 });
         tl.call(() => {

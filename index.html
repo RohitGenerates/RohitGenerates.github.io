@@ -109,6 +109,7 @@
             <source src="assets/hero-character.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
+        <canvas id="particles-canvas" class="absolute inset-0 w-full h-full opacity-100 pointer-events-none mix-blend-screen"></canvas>
         <div class="absolute inset-0 bg-gradient-to-b from-background/60 via-background/70 to-background"></div>
     </div>
 
@@ -429,7 +430,7 @@
                 <div class="relative px-container-padding page-subsection" id="about-details">
                     <div class="grid grid-cols-12 gap-gutter w-full py-24" id="journey-card">
                         <div
-                            class="col-span-12 lg:col-span-8 bg-surface-container/20 backdrop-blur-2xl rounded-[40px] border border-white/5 p-12 flex flex-col gap-8 hover:bg-surface-container/30 transition-all reveal-card">
+                            class="col-span-12 lg:col-span-8 bg-surface-container/40 backdrop-blur-[40px] rounded-[40px] border border-white/5 p-12 flex flex-col gap-8 hover:bg-surface-container/30 transition-all reveal-card">
                             <div class="flex justify-between items-start">
                                 <div class="flex flex-col gap-2">
                                     <h3 class="font-headline-lg text-headline-lg text-on-surface">My Journey</h3>
@@ -484,7 +485,7 @@
                     </div>
 
                     <div
-                        class="bg-surface-container/20 backdrop-blur-2xl rounded-[40px] border border-white/5 p-12 flex flex-col lg:flex-row gap-12 items-center reveal-card w-full mb-24">
+                        class="bg-surface-container/40 backdrop-blur-[40px] rounded-[40px] border border-white/5 p-12 flex flex-col lg:flex-row gap-12 items-center reveal-card w-full mb-24">
                         <div class="flex-1 flex flex-col gap-4">
                             <h3 class="font-headline-lg text-headline-lg text-on-surface">The Arsenal</h3>
                             <p class="text-on-surface-variant">Core frameworks, languages, and backend architectures

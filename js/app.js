@@ -1,7 +1,9 @@
 import SectionManager from './SectionManager.js';
+import { initParticles } from './particles.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const sectionMgr = new SectionManager();
+    initParticles('particles-canvas');
 
     // 0. Email Copy
     const email = document.getElementById('email-copy');
