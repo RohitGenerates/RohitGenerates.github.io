@@ -171,9 +171,22 @@ document.addEventListener('DOMContentLoaded', () => {
             modalStack.appendChild(chip);
         });
 
+        modalTag.setAttribute('data-hacker-text', 'single');
+        modalTag.setAttribute('data-hacker-mode', 'terminal');
+        modalTitle.setAttribute('data-hacker-text', 'single');
+        modalTitle.setAttribute('data-hacker-mode', 'scramble');
+        modalDesc.setAttribute('data-hacker-text', 'single');
+        modalDesc.setAttribute('data-hacker-mode', 'terminal');
+
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         document.body.style.overflow = 'hidden';
+
+        if (window.applyHackerText) {
+            window.applyHackerText(modalTag);
+            window.applyHackerText(modalTitle);
+            window.applyHackerText(modalDesc);
+        }
 
         window.sectionMgr?.setScrollEnabled(false);
 

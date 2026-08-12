@@ -1,9 +1,11 @@
 import SectionManager from './SectionManager.js';
 import { initParticles } from './particles.js';
+import { initHackerText } from './hackerRenderer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const sectionMgr = new SectionManager();
     initParticles('particles-canvas');
+    initHackerText();
 
     // 0. Email Copy
     const email = document.getElementById('email-copy');
