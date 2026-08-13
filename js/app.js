@@ -79,5 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.sectionMgr = sectionMgr;
 
-    sectionMgr.animationManager.play('home-section');
+    sectionMgr.animationManager.play('home-section').then(() => {
+        if (window.playHackerTextsInSection) {
+            window.playHackerTextsInSection('home-section');
+        }
+    });
 });

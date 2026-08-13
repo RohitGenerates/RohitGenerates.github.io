@@ -91,9 +91,9 @@ main> :last-child {
 .hacker-cursor {
     display: inline-block;
     width: 0.6em;
-    height: 1.1em;
+    height: 1em;
     background-color: currentColor;
-    vertical-align: middle;
+    vertical-align: baseline;
     margin-left: 2px;
     animation: hacker-cursor-blink 0.8s infinite;
 }

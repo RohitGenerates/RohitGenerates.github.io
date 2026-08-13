@@ -133,6 +133,10 @@ export default class SectionManager {
 
         this.scrollLock.lock();
 
+        if (window.stopHackerTextsInSection) {
+            window.stopHackerTextsInSection(fromSec.id);
+        }
+
         let unloadTimeScale = opts.unloadTimeScale;
 
         if (unloadTimeScale === undefined) {
@@ -175,6 +179,10 @@ export default class SectionManager {
 
                     if (fromTl) {
                         fromTl.progress(0).pause();
+                    }
+
+                    if (window.resetHackerTextsInSection) {
+                        window.resetHackerTextsInSection(fromSec.id);
                     }
 
                     if (opts.scrollToId) {
@@ -646,7 +654,11 @@ export default class SectionManager {
         this.scrollLock.unlock();
         this.transitionManager.isTransitioning = false;
 
-        this.animationManager.play(to);
+        this.animationManager.play(to).then(() => {
+            if (window.playHackerTextsInSection) {
+                window.playHackerTextsInSection(to);
+            }
+        });
     }
 
     /* ======================================================================

@@ -22,14 +22,22 @@ class HackerText {
         this.loopTimeoutId = null;
         this.cursor = null;
 
+        this.hasPlayed = false;
+        this.isIntersecting = false;
+        this.processedByQueue = false;
+        this.playPromise = null;
+        this.resolvePlay = null;
+
         this.intersectionObserver = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                this.play();
-                if (this.triggerMode === 'single') {
-                    this.intersectionObserver.disconnect();
+            const entry = entries[0];
+            this.isIntersecting = entry.isIntersecting;
+
+            if (this.isIntersecting) {
+                this.checkAndPlay();
+            } else {
+                if (this.triggerMode === 'loop') {
+                    this.stop();
                 }
-            } else if (this.triggerMode === 'loop') {
-                this.stop();
             }
         }, { threshold: 0.1 });
 
@@ -165,7 +173,9 @@ class HackerText {
     // }
 
     play() {
-        if (this.isAnimating) return;
+        if (this.isAnimating) {
+            return this.playPromise || Promise.resolve();
+        }
 
         if (this.loopTimeoutId) {
             clearTimeout(this.loopTimeoutId);
@@ -174,6 +184,10 @@ class HackerText {
 
         this.progress = 0;
         this.isAnimating = true;
+
+        this.playPromise = new Promise(resolve => {
+            this.resolvePlay = resolve;
+        });
 
         // Only reset to hidden when STARTING a render phase
         this.chars.forEach(c => {
@@ -185,6 +199,8 @@ class HackerText {
 
         this.lastTime = performance.now();
         requestAnimationFrame(this._renderLoop);
+
+        return this.playPromise;
     }
 
     stop() {
@@ -200,6 +216,56 @@ class HackerText {
             c.element.textContent = c.original;
             c.element.style.opacity = '1';
             c.resolved = true;
+        });
+
+        if (this.resolvePlay) {
+            this.resolvePlay();
+            this.resolvePlay = null;
+        }
+    }
+
+    checkAndPlay() {
+        if (!this.isIntersecting) return;
+        if (this.triggerMode === 'single' && this.hasPlayed) return;
+
+        const sectionEl = this.element.closest('section');
+        const sectionId = sectionEl ? sectionEl.id : null;
+        if (!sectionId) {
+            this.play();
+            if (this.triggerMode === 'single') {
+                this.hasPlayed = true;
+            }
+            return;
+        }
+
+        const isSectionActive = window.activeSections && window.activeSections.has(sectionId);
+        if (isSectionActive) {
+            const isQueueRunning = window.activeSectionQueues && window.activeSectionQueues[sectionId];
+            if (isQueueRunning) {
+                if (this.processedByQueue) {
+                    this.play();
+                    if (this.triggerMode === 'single') {
+                        this.hasPlayed = true;
+                    }
+                }
+            } else {
+                this.play();
+                if (this.triggerMode === 'single') {
+                    this.hasPlayed = true;
+                }
+            }
+        }
+    }
+
+    reset() {
+        this.stop();
+        this.hasPlayed = false;
+        this.processedByQueue = false;
+        this.chars.forEach(c => {
+            c.resolved = false;
+            c.currentGlyph = '';
+            c.element.textContent = c.original;
+            c.element.style.opacity = '0';
         });
     }
 
@@ -218,6 +284,11 @@ class HackerText {
 
             this.isAnimating = false;
             this._removeCursor();
+
+            if (this.resolvePlay) {
+                this.resolvePlay();
+                this.resolvePlay = null;
+            }
 
             if (this.triggerMode === 'loop') {
                 // RENDER COMPLETE → wait 3 seconds
@@ -496,5 +567,110 @@ export function initHackerText(container = document) {
     });
 }
 
+window.activeSections = window.activeSections || new Set();
+window.activeSectionQueues = window.activeSectionQueues || {};
+
+export async function playHackerTextsInSection(sectionId) {
+    window.activeSections = window.activeSections || new Set();
+    window.activeSections.add(sectionId);
+
+    window.activeSectionQueues = window.activeSectionQueues || {};
+    window.activeSectionQueues[sectionId] = true;
+
+    const sectionEl = document.getElementById(sectionId);
+    if (!sectionEl) {
+        window.activeSectionQueues[sectionId] = false;
+        return;
+    }
+
+    const elements = Array.from(sectionEl.querySelectorAll('[data-hacker-text]'));
+    const instances = elements
+        .map(el => el.__hackerTextInstance)
+        .filter(inst => inst !== undefined);
+
+    // Group by order
+    const groups = {};
+    instances.forEach(inst => {
+        const orderAttr = inst.element.getAttribute('data-hacker-order');
+        const order = orderAttr !== null ? parseFloat(orderAttr) : 999;
+        if (!groups[order]) {
+            groups[order] = [];
+        }
+        groups[order].push(inst);
+    });
+
+    // Sort orders ascending
+    const sortedOrders = Object.keys(groups).map(Number).sort((a, b) => a - b);
+
+    // Reset processed flags for all instances first
+    instances.forEach(inst => {
+        inst.processedByQueue = false;
+    });
+
+    // Process each group sequentially
+    for (const order of sortedOrders) {
+        const groupInstances = groups[order];
+        
+        // Mark as processed by queue
+        groupInstances.forEach(inst => {
+            inst.processedByQueue = true;
+        });
+
+        // Filter to eligible ones
+        const eligible = groupInstances.filter(inst => {
+            if (inst.triggerMode === 'single' && inst.hasPlayed) return false;
+            return inst.isIntersecting;
+        });
+
+        if (eligible.length > 0) {
+            const promises = eligible.map(inst => {
+                if (inst.triggerMode === 'single') {
+                    inst.hasPlayed = true;
+                }
+                return inst.play();
+            });
+            await Promise.all(promises);
+        }
+    }
+
+    window.activeSectionQueues[sectionId] = false;
+}
+
+export function stopHackerTextsInSection(sectionId) {
+    const sectionEl = document.getElementById(sectionId);
+    if (!sectionEl) return;
+
+    const elements = sectionEl.querySelectorAll('[data-hacker-text]');
+    elements.forEach(el => {
+        const instance = el.__hackerTextInstance;
+        if (instance) {
+            instance.stop();
+        }
+    });
+}
+
+export function resetHackerTextsInSection(sectionId) {
+    if (window.activeSections) {
+        window.activeSections.delete(sectionId);
+    }
+    if (window.activeSectionQueues) {
+        window.activeSectionQueues[sectionId] = false;
+    }
+
+    const sectionEl = document.getElementById(sectionId);
+    if (!sectionEl) return;
+
+    const elements = sectionEl.querySelectorAll('[data-hacker-text]');
+    elements.forEach(el => {
+        const instance = el.__hackerTextInstance;
+        if (instance) {
+            instance.reset();
+        }
+    });
+}
+
 window.applyHackerText = applyHackerText;
 window.initHackerText = initHackerText;
+window.playHackerTextsInSection = playHackerTextsInSection;
+window.stopHackerTextsInSection = stopHackerTextsInSection;
+window.resetHackerTextsInSection = resetHackerTextsInSection;
