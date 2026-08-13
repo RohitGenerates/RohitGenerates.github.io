@@ -70,3 +70,42 @@ main> :last-child {
 #project-modal-panel::-webkit-scrollbar {
     display: none;
 }
+
+/* Hacker Text Animation Styles */
+.hacker-word {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* .hacker-char {
+    display: inline-block;
+} */
+
+.hacker-char {
+    display: inline-block;
+    /* width: 1.1ch; */
+    text-align: center;
+    vertical-align: baseline;
+}
+
+.hacker-cursor {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.1em;
+    background-color: currentColor;
+    vertical-align: middle;
+    margin-left: 2px;
+    animation: hacker-cursor-blink 0.8s infinite;
+}
+
+@keyframes hacker-cursor-blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}

@@ -3,37 +3,24 @@ const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?';
 class HackerText {
     constructor(element) {
         this.element = element;
-        this.originalText = element.textContent.trim();
-        if (!this.originalText) return;
-
         this.triggerMode = element.getAttribute('data-hacker-text') || 'single'; // single, loop
-        this.renderMode = element.getAttribute('data-hacker-mode') || 'scramble'; // scramble, terminal
+        this.renderMode = element.getAttribute('data-hacker-mode') || 'terminal'; // scramble, terminal
         this.isActive = false;
-        
-        // Wrap characters in spans for exact layout tracking
-        this.chars = [];
-        this._buildDOM();
 
-        // Canvas setup
-        this.canvas = document.createElement('canvas');
-        this.canvas.style.position = 'absolute';
-        this.canvas.style.top = '0';
-        this.canvas.style.left = '0';
-        this.canvas.style.width = '100%';
-        this.canvas.style.height = '100%';
-        this.canvas.style.pointerEvents = 'none';
-        this.canvas.style.zIndex = '1';
-        this.element.appendChild(this.canvas);
-        this.ctx = this.canvas.getContext('2d');
+        this.chars = [];
+        this.originalText = '';
+        this._initStructure();
+
+        // loop
+        this.animationPhase = 'render'; // render | pauseAfterRender | unrender | pauseAfterUnrender
+        this.animationDirection = 1;
 
         // Animation state
         this.progress = 0; // 0 to 1
         this.lastTime = performance.now();
-        this.delay = 0;
         this.isAnimating = false;
-
-        this.resizeObserver = new ResizeObserver(() => this._resize());
-        this.resizeObserver.observe(this.element);
+        this.loopTimeoutId = null;
+        this.cursor = null;
 
         this.intersectionObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
@@ -45,72 +32,175 @@ class HackerText {
                 this.stop();
             }
         }, { threshold: 0.1 });
-        
+
         this.intersectionObserver.observe(this.element);
-        
-        this._resize();
+
         this._renderLoop = this._renderLoop.bind(this);
     }
 
-    _buildDOM() {
-        this.element.innerHTML = '';
-        if (window.getComputedStyle(this.element).position === 'static') {
-            this.element.style.position = 'relative';
+    _initStructure() {
+        const text = this.element.textContent.trim();
+        if (!text) {
+            this.chars = [];
+            return;
         }
 
-        // Keep text flow intact but make it invisible
-        for (let i = 0; i < this.originalText.length; i++) {
-            const char = this.originalText[i];
-            const span = document.createElement('span');
-            span.textContent = char;
-            span.style.opacity = '0'; // Keep it in DOM for layout, but invisible
-            if (char === ' ') {
-                span.style.whiteSpace = 'pre';
+        // Check if already initialized and text hasn't changed
+        const hasSpans = this.element.querySelector('.hacker-char') !== null;
+        if (hasSpans && this.originalText === text) {
+            // Retrieve existing spans
+            this.chars = [];
+            const charElements = this.element.querySelectorAll('.hacker-char');
+            charElements.forEach(el => {
+                const orig = el.getAttribute('data-orig') || el.textContent;
+                this.chars.push({
+                    element: el,
+                    original: orig,
+                    current: el.textContent,
+                    resolved: false
+                });
+            });
+            return;
+        }
+
+        // Otherwise, wrap text nodes recursively
+        this.originalText = text;
+        this.chars = [];
+        this._wrapTextNodes(this.element);
+    }
+
+    _wrapTextNodes(element) {
+        const textNodes = [];
+        const walker = document.createTreeWalker(
+            element,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode(node) {
+                    const parent = node.parentNode;
+                    if (!parent) return NodeFilter.FILTER_REJECT;
+
+                    // Don't traverse inside already processed hacker-word/hacker-char/hacker-cursor
+                    if (parent.classList.contains('hacker-char') || parent.classList.contains('hacker-word') ||
+                        parent.classList.contains('hacker-cursor') || parent.classList.contains('hacker-ignore')) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+
+                    const tag = parent.tagName.toUpperCase();
+                    if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEMPLATE') {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+
+                    return NodeFilter.FILTER_ACCEPT;
+                }
             }
-            this.element.appendChild(span);
-            this.chars.push({ char, span, x: 0, y: 0, width: 0, resolved: false, currentGlyph: '' });
+        );
+
+        let node;
+        while (node = walker.nextNode()) {
+            textNodes.push(node);
+        }
+
+        for (const textNode of textNodes) {
+            const text = textNode.textContent;
+
+            // If the text node is inside the element but it's just pure whitespace, we can leave it as is
+            if (/^\s*$/.test(text)) {
+                continue;
+            }
+
+            const parts = text.split(/(\s+)/);
+            const fragment = document.createDocumentFragment();
+
+            for (const part of parts) {
+                if (!part) continue;
+                if (/^\s+$/.test(part)) {
+                    fragment.appendChild(document.createTextNode(part));
+                } else {
+                    const wordSpan = document.createElement('span');
+                    wordSpan.className = 'hacker-word';
+
+                    for (let i = 0; i < part.length; i++) {
+                        const char = part[i];
+                        const charSpan = document.createElement('span');
+                        charSpan.className = 'hacker-char';
+                        charSpan.setAttribute('data-orig', char);
+                        charSpan.textContent = char;
+
+                        // Start invisible
+                        charSpan.style.opacity = '0';
+
+                        wordSpan.appendChild(charSpan);
+                        this.chars.push({
+                            element: charSpan,
+                            original: char,
+                            current: char,
+                            resolved: false
+                        });
+                    }
+                    fragment.appendChild(wordSpan);
+                }
+            }
+
+            textNode.parentNode.replaceChild(fragment, textNode);
         }
     }
 
-    _resize() {
-        const rect = this.element.getBoundingClientRect();
-        this.canvas.width = rect.width;
-        this.canvas.height = rect.height;
-        
-        // Update character positions
-        for (const c of this.chars) {
-            c.x = c.span.offsetLeft;
-            c.y = c.span.offsetTop;
-            c.width = c.span.offsetWidth;
-            c.height = c.span.offsetHeight;
-        }
+    // play() {
+    //     if (this.isAnimating) return;
+    //     this.progress = 0;
+    //     this.isAnimating = true;
+    //     this.chars.forEach(c => {
+    //         c.resolved = false;
+    //         c.currentGlyph = '';
+    //         c.element.style.opacity = '0';
+    //     });
 
-        // Get computed styles for canvas rendering
-        const style = window.getComputedStyle(this.element);
-        this.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-        this.color = style.color;
-        
-        if (!this.isAnimating) {
-            this._draw();
-        }
-    }
+    //     if (this.loopTimeoutId) {
+    //         clearTimeout(this.loopTimeoutId);
+    //         this.loopTimeoutId = null;
+    //     }
+
+    //     this.lastTime = performance.now();
+    //     requestAnimationFrame(this._renderLoop);
+    // }
 
     play() {
         if (this.isAnimating) return;
+
+        if (this.loopTimeoutId) {
+            clearTimeout(this.loopTimeoutId);
+            this.loopTimeoutId = null;
+        }
+
         this.progress = 0;
         this.isAnimating = true;
+
+        // Only reset to hidden when STARTING a render phase
         this.chars.forEach(c => {
             c.resolved = false;
             c.currentGlyph = '';
+            c.element.textContent = c.original;
+            c.element.style.opacity = '0';
         });
-        
+
         this.lastTime = performance.now();
         requestAnimationFrame(this._renderLoop);
     }
 
     stop() {
         this.isAnimating = false;
+        if (this.loopTimeoutId) {
+            clearTimeout(this.loopTimeoutId);
+            this.loopTimeoutId = null;
+        }
         this.progress = 0;
+        this._removeCursor();
+        // Resolve all characters back to original
+        this.chars.forEach(c => {
+            c.element.textContent = c.original;
+            c.element.style.opacity = '1';
+            c.resolved = true;
+        });
     }
 
     _renderLoop(time) {
@@ -119,119 +209,280 @@ class HackerText {
         const dt = time - this.lastTime;
         this.lastTime = time;
 
-        const duration = this.renderMode === 'terminal' ? 1500 : 800; // Terminal is a bit slower
+        const duration = this.renderMode === 'terminal' ? 1500 : 1750;
         this.progress += dt / duration;
 
         if (this.progress >= 1) {
             this.progress = 1;
-            this._draw();
-            
+            this._tick();
+
+            this.isAnimating = false;
+            this._removeCursor();
+
             if (this.triggerMode === 'loop') {
-                this.isAnimating = false;
-                setTimeout(() => this.play(), 3000); // Wait 3s before looping
-            } else {
-                this.isAnimating = false;
+                // RENDER COMPLETE → wait 3 seconds
+                this.loopTimeoutId = setTimeout(() => {
+                    this._startUnrender();
+                }, 3000);
             }
+
             return;
         }
 
-        this._draw();
+        this._tick();
         requestAnimationFrame(this._renderLoop);
     }
 
-    _draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.font = this.font;
-        this.ctx.fillStyle = this.color;
-        this.ctx.textBaseline = 'top';
+    // _renderLoop(time) {
+    //     if (!this.isAnimating) return;
 
+    //     const dt = time - this.lastTime;
+    //     this.lastTime = time;
+
+    //     const duration = this.renderMode === 'terminal' ? 1500 : 1750; // Terminal is a bit slower
+    //     this.progress += dt / duration;
+
+    //     if (this.progress >= 1) {
+    //         this.progress = 1;
+    //         this._tick();
+
+    //         this._removeCursor();
+
+    //         if (this.triggerMode === 'loop' && this.isAnimating) {
+    //             this.isAnimating = false;
+    //             this.loopTimeoutId = setTimeout(() => this.play(), 3000); // Wait 3s before looping
+    //         } else {
+    //             this.isAnimating = false;
+    //         }
+    //         return;
+    //     }
+
+    //     this._tick();
+    //     requestAnimationFrame(this._renderLoop);
+    // }
+
+    _tick() {
         if (this.renderMode === 'scramble') {
-            this._drawScramble();
+            this._tickScramble();
         } else if (this.renderMode === 'terminal') {
-            this._drawTerminal();
+            this._tickTerminal();
         }
     }
 
-    _drawScramble() {
+    _tickScramble() {
         const totalChars = this.chars.length;
         const resolvedCount = Math.floor(this.progress * totalChars);
 
         for (let i = 0; i < totalChars; i++) {
             const c = this.chars[i];
-            if (c.char === ' ') continue;
+            const span = c.element;
 
             if (i < resolvedCount) {
                 // Resolved character
-                this.ctx.globalAlpha = 1;
-                this.ctx.fillText(c.char, c.x, c.y);
-            } else if (i < resolvedCount + 10) { // Only scramble the next few characters for a cool trailing effect
+                if (!c.resolved) {
+                    span.textContent = c.original;
+                    span.style.opacity = '1';
+                    c.resolved = true;
+                }
+            } else if (i < resolvedCount + 10) {
                 // Scrambling character
-                if (Math.random() > 0.8 || !c.currentGlyph) {
+                if (Math.random() > 0.3 || !c.currentGlyph) {
                     c.currentGlyph = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
                 }
-                this.ctx.globalAlpha = 0.5 + Math.random() * 0.5;
-                this.ctx.fillText(c.currentGlyph, c.x, c.y);
+                span.textContent = c.currentGlyph;
+                span.style.opacity = (0.5 + Math.random() * 0.5).toString();
+                c.resolved = false;
+            } else {
+                // Unresolved character
+                if (span.style.opacity !== '0') {
+                    span.textContent = c.original;
+                    span.style.opacity = '0';
+                }
+                c.resolved = false;
             }
         }
-        this.ctx.globalAlpha = 1;
     }
 
-    _drawTerminal() {
+    _tickTerminal() {
         const totalChars = this.chars.length;
         const visibleCount = Math.floor(this.progress * totalChars);
-        
-        let lastCharX = 0;
-        let lastCharY = 0;
-        let lastCharWidth = 0;
 
         for (let i = 0; i < totalChars; i++) {
             const c = this.chars[i];
-            
+            const span = c.element;
+
             if (i < visibleCount) {
-                this.ctx.fillText(c.char, c.x, c.y);
-                lastCharX = c.x;
-                lastCharY = c.y;
-                lastCharWidth = c.width;
+                span.style.opacity = '1';
+                span.textContent = c.original;
+            } else {
+                span.style.opacity = '0';
             }
         }
 
         // Draw Terminal Cursor
-        if (this.progress < 1) {
-            // Blinking effect logic (blink every ~200ms)
-            const blink = Math.floor(performance.now() / 200) % 2 === 0;
-            if (blink) {
-                let cursorX = 0;
-                let cursorY = 0;
-                
-                if (visibleCount > 0 && visibleCount < totalChars) {
-                    const nextC = this.chars[visibleCount];
-                    cursorX = nextC.x;
-                    cursorY = nextC.y;
-                } else if (visibleCount === 0 && totalChars > 0) {
-                    cursorX = this.chars[0].x;
-                    cursorY = this.chars[0].y;
-                } else {
-                    cursorX = lastCharX + lastCharWidth;
-                    cursorY = lastCharY;
-                }
+        if (this.progress < 1 && totalChars > 0) {
+            this._updateCursor(visibleCount);
+        } else {
+            this._removeCursor();
+        }
+    }
 
-                // The font size string is like "800 48px Bricolage Grotesque", extract the size roughly
-                const sizeMatch = this.font.match(/(\d+)px/);
-                const cursorHeight = sizeMatch ? parseInt(sizeMatch[1]) : 16;
-                const cursorWidth = cursorHeight * 0.6;
+    _updateCursor(visibleCount) {
+        if (!this.cursor) {
+            this.cursor = document.createElement('span');
+            this.cursor.className = 'hacker-cursor';
+        }
 
-                this.ctx.fillStyle = this.color;
-                this.ctx.fillRect(cursorX, cursorY, cursorWidth, cursorHeight);
+        const totalChars = this.chars.length;
+        if (visibleCount > 0 && visibleCount <= totalChars) {
+            const prevCharSpan = this.chars[visibleCount - 1].element;
+            if (this.cursor.previousSibling !== prevCharSpan) {
+                prevCharSpan.after(this.cursor);
+            }
+        } else if (visibleCount === 0 && totalChars > 0) {
+            const firstCharSpan = this.chars[0].element;
+            if (this.cursor.nextSibling !== firstCharSpan) {
+                firstCharSpan.before(this.cursor);
             }
         }
+    }
+
+    _removeCursor() {
+        if (this.cursor && this.cursor.parentNode) {
+            this.cursor.parentNode.removeChild(this.cursor);
+        }
+    }
+
+    destroy() {
+        this.stop();
+        if (this.intersectionObserver) {
+            this.intersectionObserver.disconnect();
+        }
+        this._removeCursor();
+        this.element.textContent = this.originalText;
+    }
+
+    _tickUnrender() {
+        const totalChars = this.chars.length;
+
+        // Remove from RIGHT → LEFT
+        const visibleCount = Math.ceil(
+            totalChars * (1 - this.progress)
+        );
+
+        for (let i = 0; i < totalChars; i++) {
+            const c = this.chars[i];
+
+            if (i < visibleCount) {
+                c.element.textContent = c.original;
+                c.element.style.opacity = '1';
+            } else {
+                c.element.textContent = c.original;
+                c.element.style.opacity = '0';
+            }
+        }
+    }
+
+    _unrender() {
+        if (this.triggerMode !== 'loop') return;
+
+        const duration = this.renderMode === 'terminal' ? 1500 : 1750;
+        const startTime = performance.now();
+
+        const animateUnrender = (time) => {
+            if (this.triggerMode !== 'loop') return;
+
+            const progress = Math.min(
+                (time - startTime) / duration,
+                1
+            );
+
+            // RIGHT → LEFT
+            const visibleCount = Math.ceil(
+                this.chars.length * (1 - progress)
+            );
+
+            for (let i = 0; i < this.chars.length; i++) {
+                const c = this.chars[i];
+
+                if (i < visibleCount) {
+                    c.element.textContent = c.original;
+                    c.element.style.opacity = '1';
+                } else {
+                    c.element.style.opacity = '0';
+                }
+            }
+
+            if (progress < 1) {
+                requestAnimationFrame(animateUnrender);
+            } else {
+                // Completely hidden.
+                // Wait 3 seconds, then render again.
+                this.loopTimeoutId = setTimeout(() => {
+                    this.play();
+                }, 3000);
+            }
+        };
+
+        animateUnrender(startTime);
+    }
+
+    _unrenderLoop(time) {
+        if (!this.isAnimating) return;
+
+        const dt = time - this.lastTime;
+        this.lastTime = time;
+
+        const duration = this.renderMode === 'terminal' ? 1500 : 1750;
+        this.progress += dt / duration;
+
+        if (this.progress >= 1) {
+            this.progress = 1;
+            this._tickUnrender();
+
+            this.isAnimating = false;
+
+            // UNRENDER COMPLETE → wait 3 seconds
+            this.loopTimeoutId = setTimeout(() => {
+                // IMPORTANT:
+                // Restore the characters to their starting state
+                // before beginning the next render.
+                this.chars.forEach(c => {
+                    c.resolved = false;
+                    c.currentGlyph = '';
+                    c.element.textContent = c.original;
+                    c.element.style.opacity = '0';
+                });
+
+                this.progress = 0;
+                this.isAnimating = true;
+                this.lastTime = performance.now();
+
+                requestAnimationFrame(this._renderLoop);
+            }, 3000);
+
+            return;
+        }
+
+        this._tickUnrender();
+        requestAnimationFrame(this._unrenderLoop);
+    }
+
+    _startUnrender() {
+        if (this.triggerMode !== 'loop') return;
+
+        this.isAnimating = true;
+        this.progress = 0;
+        this.lastTime = performance.now();
+
+        requestAnimationFrame(this._unrenderLoop);
     }
 }
 
 export function applyHackerText(el) {
     if (el.__hackerTextInstance) {
         el.__hackerTextInstance.stop();
-        el.__hackerTextInstance._buildDOM();
-        el.__hackerTextInstance._resize();
+        el.__hackerTextInstance._initStructure();
         el.__hackerTextInstance.play();
     } else {
         el.__hackerTextInstance = new HackerText(el);
