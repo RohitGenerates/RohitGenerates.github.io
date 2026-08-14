@@ -67,8 +67,36 @@ main> :last-child {
     display: flex;
 }
 
+#project-modal-panel {
+    width: 92vw;
+    height: 85vh;
+    max-height: 85vh;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
 #project-modal-panel::-webkit-scrollbar {
     display: none;
+}
+
+@media (min-width: 1024px) {
+    #project-modal-panel {
+        width: 85vw;
+        height: 85vh;
+    }
+}
+
+#project-modal-content-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#project-modal-content-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.gallery-dot {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hacker Text Animation Styles */
