@@ -550,6 +550,280 @@ class HackerText {
     }
 }
 
+class HackerImage {
+    constructor(element) {
+        this.element = element;
+        this.img = element.querySelector('img');
+        this.triggerMode = element.getAttribute('data-hacker-image') || 'single';
+
+        if (!this.img) return;
+
+        this.canvas = document.createElement('canvas');
+        this.canvas.className = 'hacker-image-canvas';
+        this.canvas.style.position = 'absolute';
+        this.canvas.style.top = '0';
+        this.canvas.style.left = '0';
+        this.canvas.style.width = '100%';
+        this.canvas.style.height = '100%';
+        this.canvas.style.pointerEvents = 'none';
+        this.canvas.style.zIndex = '20';
+        this.element.appendChild(this.canvas);
+        this.ctx = this.canvas.getContext('2d');
+
+        // Hide original image initially (with smooth transition for when canvas fades out)
+        this.img.style.opacity = '0';
+        this.img.style.transition = 'opacity 0.4s ease';
+
+        this.progress = 0;
+        this.lastTime = performance.now();
+        this.isAnimating = false;
+        this.hasPlayed = false;
+        this.isIntersecting = false;
+        this.processedByQueue = false;
+        this.playPromise = null;
+        this.resolvePlay = null;
+
+        this.intersectionObserver = new IntersectionObserver((entries) => {
+            const entry = entries[0];
+            this.isIntersecting = entry.isIntersecting;
+
+            if (this.isIntersecting) {
+                this.checkAndPlay();
+            } else {
+                if (this.triggerMode === 'loop') {
+                    this.stop();
+                }
+            }
+        }, { threshold: 0.1 });
+
+        this.intersectionObserver.observe(this.element);
+
+        this._renderLoop = this._renderLoop.bind(this);
+    }
+
+    play() {
+        if (this.isAnimating) {
+            return this.playPromise || Promise.resolve();
+        }
+
+        this.progress = 0;
+        this.isAnimating = true;
+        this.playPromise = new Promise(resolve => {
+            this.resolvePlay = resolve;
+        });
+
+        // Hide original image at the start of rendering
+        this.img.style.opacity = '0';
+        this.canvas.style.opacity = '1';
+
+        // Prepare dimensions
+        this.canvas.width = this.element.clientWidth || 300;
+        this.canvas.height = this.element.clientHeight || 300;
+
+        this.lastTime = performance.now();
+        requestAnimationFrame(this._renderLoop);
+
+        return this.playPromise;
+    }
+
+    stop() {
+        this.isAnimating = false;
+        this.progress = 0;
+        
+        // Show original image fully
+        this.img.style.opacity = '1';
+        this.canvas.style.opacity = '0';
+        
+        const W = this.canvas.width;
+        const H = this.canvas.height;
+        if (W > 0 && H > 0) {
+            this.ctx.clearRect(0, 0, W, H);
+        }
+
+        if (this.resolvePlay) {
+            this.resolvePlay();
+            this.resolvePlay = null;
+        }
+    }
+
+    checkAndPlay() {
+        if (!this.isIntersecting) return;
+        if (this.triggerMode === 'single' && this.hasPlayed) return;
+
+        const sectionEl = this.element.closest('section');
+        const sectionId = sectionEl ? sectionEl.id : null;
+        if (!sectionId) {
+            this.play();
+            if (this.triggerMode === 'single') {
+                this.hasPlayed = true;
+            }
+            return;
+        }
+
+        const isSectionActive = window.activeSections && window.activeSections.has(sectionId);
+        if (isSectionActive) {
+            const isQueueRunning = window.activeSectionQueues && window.activeSectionQueues[sectionId];
+            if (isQueueRunning) {
+                if (this.processedByQueue) {
+                    this.play();
+                    if (this.triggerMode === 'single') {
+                        this.hasPlayed = true;
+                    }
+                }
+            } else {
+                this.play();
+                if (this.triggerMode === 'single') {
+                    this.hasPlayed = true;
+                }
+            }
+        }
+    }
+
+    reset() {
+        this.stop();
+        this.hasPlayed = false;
+        this.processedByQueue = false;
+        this.img.style.opacity = '0';
+    }
+
+    _renderLoop(time) {
+        if (!this.isAnimating) return;
+
+        const dt = time - this.lastTime;
+        this.lastTime = time;
+
+        const duration = 2000; // Sweep duration
+        this.progress += dt / duration;
+
+        if (this.progress >= 1) {
+            this.progress = 1;
+            this._draw();
+
+            this.isAnimating = false;
+            
+            // Fade original image in, canvas out
+            this.img.style.opacity = '1';
+            this.canvas.style.opacity = '0';
+
+            if (this.resolvePlay) {
+                this.resolvePlay();
+                this.resolvePlay = null;
+            }
+
+            if (this.triggerMode === 'loop') {
+                // Wait 4 seconds, then reset and loop
+                setTimeout(() => {
+                    if (this.triggerMode === 'loop') {
+                        this.play();
+                    }
+                }, 4000);
+            }
+
+            return;
+        }
+
+        this._draw();
+        requestAnimationFrame(this._renderLoop);
+    }
+
+    _draw() {
+        const W = this.canvas.width;
+        const H = this.canvas.height;
+        if (W <= 0 || H <= 0) return;
+
+        this.ctx.clearRect(0, 0, W, H);
+
+        const Y = this.progress * H;
+
+        // 1. Draw resolved/pixelated image above the sweep line
+        if (Y > 0) {
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.rect(0, 0, W, Y);
+            this.ctx.clip();
+
+            if (this.img.complete && this.img.naturalWidth !== 0) {
+                if (this.progress < 0.95) {
+                    // Pixelated image: scale down and scale up
+                    const p = this.progress;
+                    const maxPixelSize = 32;
+                    // Pixel size goes from maxPixelSize down to 1 as progress increases
+                    const pixelSize = Math.max(1, Math.floor((1 - p) * maxPixelSize));
+                    
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = Math.max(1, Math.floor(W / pixelSize));
+                    tempCanvas.height = Math.max(1, Math.floor(H / pixelSize));
+                    const tempCtx = tempCanvas.getContext('2d');
+                    tempCtx.drawImage(this.img, 0, 0, tempCanvas.width, tempCanvas.height);
+
+                    this.ctx.imageSmoothingEnabled = false;
+                    this.ctx.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, W, H);
+                } else {
+                    // Draw original sharp image
+                    this.ctx.drawImage(this.img, 0, 0, W, H);
+                }
+            } else {
+                // Fallback if image not loaded: solid dark green box
+                this.ctx.fillStyle = 'rgba(233, 196, 0, 0.2)'; // theme color
+                this.ctx.fillRect(0, 0, W, Y);
+            }
+            this.ctx.restore();
+        }
+
+        // 2. Draw black decryption static below the sweep line
+        if (Y < H) {
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.rect(0, Y, W, H - Y);
+            this.ctx.clip();
+
+            // Dark backdrop
+            this.ctx.fillStyle = 'rgba(19, 19, 19, 0.92)';
+            this.ctx.fillRect(0, Y, W, H - Y);
+
+            // Matrix style binary code rain
+            this.ctx.fillStyle = '#e9c400'; // primary theme yellow
+            this.ctx.font = 'bold 9px monospace';
+            const cellW = 16;
+            const cellH = 16;
+            for (let x = 0; x < W; x += cellW) {
+                for (let y = Math.floor(Y / cellH) * cellH; y < H; y += cellH) {
+                    const noise = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+                    const rand = noise - Math.floor(noise);
+                    if (rand > 0.6) {
+                        const char = rand > 0.8 ? '1' : '0';
+                        this.ctx.fillText(char, x + 4, y + 10);
+                    }
+                }
+            }
+            this.ctx.restore();
+        }
+
+        // 3. Draw glowing horizontal scanline
+        if (Y > 0 && Y < H) {
+            this.ctx.fillStyle = '#e9c400';
+            this.ctx.fillRect(0, Y - 2, W, 4);
+
+            // Scanline glow
+            this.ctx.shadowColor = '#e9c400';
+            this.ctx.shadowBlur = 12;
+            this.ctx.fillRect(0, Y - 1, W, 2);
+            this.ctx.shadowBlur = 0; // reset
+        }
+    }
+
+    destroy() {
+        this.stop();
+        if (this.intersectionObserver) {
+            this.intersectionObserver.disconnect();
+        }
+        if (this.canvas && this.canvas.parentNode) {
+            this.canvas.parentNode.removeChild(this.canvas);
+        }
+        this.img.style.opacity = '1';
+    }
+}
+
 export function applyHackerText(el) {
     if (el.__hackerTextInstance) {
         el.__hackerTextInstance.stop();
@@ -561,9 +835,19 @@ export function applyHackerText(el) {
 }
 
 export function initHackerText(container = document) {
-    const elements = container.querySelectorAll('[data-hacker-text]');
-    elements.forEach(el => {
+    const textElements = container.querySelectorAll('[data-hacker-text]');
+    textElements.forEach(el => {
         applyHackerText(el);
+    });
+
+    const imgElements = container.querySelectorAll('[data-hacker-image]');
+    imgElements.forEach(el => {
+        if (el.__hackerImageInstance) {
+            el.__hackerImageInstance.stop();
+            el.__hackerImageInstance.play();
+        } else {
+            el.__hackerImageInstance = new HackerImage(el);
+        }
     });
 }
 
@@ -583,10 +867,13 @@ export async function playHackerTextsInSection(sectionId) {
         return;
     }
 
-    const elements = Array.from(sectionEl.querySelectorAll('[data-hacker-text]'));
-    const instances = elements
-        .map(el => el.__hackerTextInstance)
-        .filter(inst => inst !== undefined);
+    const textElements = Array.from(sectionEl.querySelectorAll('[data-hacker-text]'));
+    const imgElements = Array.from(sectionEl.querySelectorAll('[data-hacker-image]'));
+
+    const instances = [
+        ...textElements.map(el => el.__hackerTextInstance),
+        ...imgElements.map(el => el.__hackerImageInstance)
+    ].filter(inst => inst !== undefined);
 
     // Group by order
     const groups = {};
@@ -640,12 +927,14 @@ export function stopHackerTextsInSection(sectionId) {
     const sectionEl = document.getElementById(sectionId);
     if (!sectionEl) return;
 
-    const elements = sectionEl.querySelectorAll('[data-hacker-text]');
-    elements.forEach(el => {
-        const instance = el.__hackerTextInstance;
-        if (instance) {
-            instance.stop();
-        }
+    const textElements = sectionEl.querySelectorAll('[data-hacker-text]');
+    textElements.forEach(el => {
+        if (el.__hackerTextInstance) el.__hackerTextInstance.stop();
+    });
+
+    const imgElements = sectionEl.querySelectorAll('[data-hacker-image]');
+    imgElements.forEach(el => {
+        if (el.__hackerImageInstance) el.__hackerImageInstance.stop();
     });
 }
 
@@ -660,12 +949,14 @@ export function resetHackerTextsInSection(sectionId) {
     const sectionEl = document.getElementById(sectionId);
     if (!sectionEl) return;
 
-    const elements = sectionEl.querySelectorAll('[data-hacker-text]');
-    elements.forEach(el => {
-        const instance = el.__hackerTextInstance;
-        if (instance) {
-            instance.reset();
-        }
+    const textElements = sectionEl.querySelectorAll('[data-hacker-text]');
+    textElements.forEach(el => {
+        if (el.__hackerTextInstance) el.__hackerTextInstance.reset();
+    });
+
+    const imgElements = sectionEl.querySelectorAll('[data-hacker-image]');
+    imgElements.forEach(el => {
+        if (el.__hackerImageInstance) el.__hackerImageInstance.reset();
     });
 }
 
