@@ -137,3 +137,13 @@ main> :last-child {
         opacity: 0;
     }
 }
+
+/* Boot Screen cursor blinking */
+@keyframes boot-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.animate-blink {
+    animation: boot-blink 0.8s steps(2, start) infinite;
+}

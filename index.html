@@ -101,6 +101,19 @@
 
 <body class="bg-background font-body-md text-body-md text-on-surface antialiased">
 
+    <!-- ============ BOOT SCREEN ============ -->
+    <div id="boot-screen" class="fixed inset-0 bg-black z-[9999] flex flex-col items-center justify-center font-mono select-none overflow-hidden">
+        <div class="flex flex-col items-center justify-center w-full px-4">
+            <div class="flex items-center justify-center flex-nowrap whitespace-nowrap mb-6">
+                <span id="boot-percent" class="text-[96px] md:text-[144px] font-bold text-primary tracking-tighter leading-none">0%</span>
+                <span id="boot-cursor" class="w-[8px] h-[72px] md:h-[108px] bg-primary ml-4 animate-blink shrink-0"></span>
+            </div>
+            <div id="boot-status" class="text-on-surface-variant text-[14px] md:text-[16px] uppercase tracking-[0.25em] min-h-[24px] text-center whitespace-nowrap">
+                &gt; initializing...
+            </div>
+        </div>
+    </div>
+
     <div id="scrub-bg" class="fixed inset-0 overflow-hidden pointer-events-none">
         <img id="scrub-bg-img" src="assets/hero-character.jpg" alt=""
             class="absolute inset-0 w-full h-full object-cover opacity-100" />
@@ -981,31 +994,38 @@
             </button>
             <div class="flex flex-col lg:flex-row gap-6 lg:gap-10 h-full w-full overflow-hidden">
                 <!-- Left Column: Image Gallery -->
-                <div class="w-full lg:w-1/2 h-[45%] lg:h-full flex-shrink-0 relative rounded-3xl overflow-hidden border border-white/10 group">
-                    <div id="project-modal-image"
-                        class="w-full h-full bg-cover bg-center transition-all duration-300"></div>
-                    
+                <div
+                    class="w-full lg:w-1/2 h-[45%] lg:h-full flex-shrink-0 relative rounded-3xl overflow-hidden border border-white/10 group">
+                    <div id="project-modal-image" class="w-full h-full bg-cover bg-center transition-all duration-300">
+                    </div>
+
                     <!-- Navigation Buttons -->
-                    <div id="gallery-controls" class="absolute inset-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                        <button id="gallery-prev" type="button" class="w-10 h-10 rounded-full bg-black/60 hover:bg-primary hover:text-on-primary flex items-center justify-center text-white pointer-events-auto transition-all duration-200 shadow-md">
+                    <div id="gallery-controls"
+                        class="absolute inset-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                        <button id="gallery-prev" type="button"
+                            class="w-10 h-10 rounded-full bg-black/60 hover:bg-primary hover:text-on-primary flex items-center justify-center text-white pointer-events-auto transition-all duration-200 shadow-md">
                             <span class="material-symbols-outlined text-[20px]">chevron_left</span>
                         </button>
-                        <button id="gallery-next" type="button" class="w-10 h-10 rounded-full bg-black/60 hover:bg-primary hover:text-on-primary flex items-center justify-center text-white pointer-events-auto transition-all duration-200 shadow-md">
+                        <button id="gallery-next" type="button"
+                            class="w-10 h-10 rounded-full bg-black/60 hover:bg-primary hover:text-on-primary flex items-center justify-center text-white pointer-events-auto transition-all duration-200 shadow-md">
                             <span class="material-symbols-outlined text-[20px]">chevron_right</span>
                         </button>
                     </div>
-                    
+
                     <!-- Dots indicator -->
                     <div id="gallery-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10"></div>
                 </div>
-                
+
                 <!-- Right Column: Content Details -->
-                <div class="w-full lg:w-1/2 h-[55%] lg:h-full flex flex-col justify-between overflow-y-auto pr-2 pb-6 lg:pb-0" id="project-modal-content-scroll">
+                <div class="w-full lg:w-1/2 h-[55%] lg:h-full flex flex-col justify-between overflow-y-auto pr-2 pb-6 lg:pb-0"
+                    id="project-modal-content-scroll">
                     <div class="space-y-6 pt-2 lg:pt-0">
                         <div>
                             <span id="project-modal-tag"
                                 class="px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-primary font-label-sm text-[10px] uppercase tracking-widest inline-block mb-4"></span>
-                            <h2 id="project-modal-title" class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface mb-2 lg:mb-4"></h2>
+                            <h2 id="project-modal-title"
+                                class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface mb-2 lg:mb-4">
+                            </h2>
                         </div>
                         <p id="project-modal-desc" class="font-body-md text-on-surface-variant leading-relaxed"></p>
                     </div>

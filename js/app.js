@@ -79,9 +79,96 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.sectionMgr = sectionMgr;
 
-    sectionMgr.animationManager.play('home-section').then(() => {
-        if (window.playHackerTextsInSection) {
-            window.playHackerTextsInSection('home-section');
+    // Boot/Entrance Loader Logic
+    const bootScreen = document.getElementById('boot-screen');
+    const bootPercent = document.getElementById('boot-percent');
+    const bootStatus = document.getElementById('boot-status');
+    const bootCursor = document.getElementById('boot-cursor');
+
+    let isLoaded = false;
+    let progress = { val: 0 };
+
+    // Function to update status text depending on count value
+    function updateStatus(val) {
+        if (!bootStatus) return;
+        if (val < 25) {
+            bootStatus.textContent = '> initializing...';
+        } else if (val < 60) {
+            bootStatus.textContent = '> loading interface...';
+        } else if (val < 95) {
+            bootStatus.textContent = '> preparing assets...';
+        } else if (val >= 100) {
+            bootStatus.textContent = '> system ready_';
+        }
+    }
+
+    // Set listener for window load
+    window.addEventListener('load', () => {
+        isLoaded = true;
+    });
+    // Fallback if load has already fired or completes immediately
+    if (document.readyState === 'complete') {
+        isLoaded = true;
+    }
+
+    // Initial progress count animation from 0% to 95%
+    gsap.to(progress, {
+        val: 95,
+        duration: 1.2,
+        ease: 'power1.out',
+        onUpdate: () => {
+            const currentPct = Math.floor(progress.val);
+            if (bootPercent) bootPercent.textContent = currentPct + '%';
+            updateStatus(currentPct);
+        },
+        onComplete: () => {
+            // Check if page has finished loading
+            checkCompletion();
         }
     });
+
+    function checkCompletion() {
+        if (isLoaded) {
+            // Smoothly complete the loading to 100%
+            gsap.to(progress, {
+                val: 100,
+                duration: 0.3,
+                ease: 'power1.in',
+                onUpdate: () => {
+                    const currentPct = Math.floor(progress.val);
+                    if (bootPercent) bootPercent.textContent = currentPct + '%';
+                    updateStatus(currentPct);
+                },
+                onComplete: () => {
+                    // Blink cursor off/hide it for clean entrance
+                    if (bootCursor) bootCursor.style.display = 'none';
+
+                    // Smooth exit: fade out and slide up
+                    const exitTl = gsap.timeline({
+                        onComplete: () => {
+                            if (bootScreen) bootScreen.style.display = 'none';
+                            
+                            // Initialize portfolio landing section animation
+                            sectionMgr.animationManager.play('home-section').then(() => {
+                                if (window.playHackerTextsInSection) {
+                                    window.playHackerTextsInSection('home-section');
+                                }
+                            });
+                        }
+                    });
+
+                    exitTl.to(bootScreen, {
+                        opacity: 0,
+                        yPercent: -100,
+                        duration: 0.8,
+                        ease: 'power3.inOut',
+                        delay: 0.2
+                    });
+                }
+            });
+        } else {
+            // Keep checking until page is ready
+            setTimeout(checkCompletion, 50);
+        }
+    }
 });
