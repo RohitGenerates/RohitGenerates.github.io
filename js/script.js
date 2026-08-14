@@ -8,34 +8,52 @@ document.addEventListener('DOMContentLoaded', () => {
         'neon-genesis': {
             tag: 'Major Project / Security',
             title: 'NeuralArmor',
-            image: 'assets/project-neuralmor.jpg',
+            images: ['assets/project-ai-assistant.jpg', 'assets/project-cyber-dashboard.jpg', 'assets/project-developer.jpg'],
             desc: 'Model-agnostic security reverse proxy for autonomous perception systems. Engineered in FastAPI with a CVPR 2025 Adversarial Consistency Distillation purifier, achieving 98% latency reduction (5s → 0.1s). Red Teaming scanner using ART against PGD/FGSM attacks with Grad-CAM XAI forensic visualization.',
             stack: ['FastAPI', 'Python', 'ART', 'CVPR 2025', 'Grad-CAM XAI']
         },
         'system-archive': {
             tag: 'Academic / Privacy',
             title: 'Digital Footprint Analyzer',
-            image: 'assets/project-privacy-audit.jpg',
+            images: ['assets/project-cyber-dashboard.jpg', 'assets/project-developer.jpg', 'assets/project-music-platform.jpg'],
             desc: 'Real-time web privacy risk auditor built with mitmproxy, Flask, and a Manifest V3 Chrome extension. Tracks fingerprinting signals and cookies to compute live 0–100 domain risk scores via non-intrusive network analysis and PostgreSQL visualization.',
             stack: ['Python', 'Flask', 'mitmproxy', 'PostgreSQL', 'Chrome Extension']
         },
         'digital-soul': {
             tag: 'Hackathon / 2nd Place',
             title: 'ConnectNet',
-            image: 'assets/project-connectnet.jpg',
+            images: ['assets/project-developer.jpg', 'assets/project-music-platform.jpg', 'assets/project-robotics.jpg'],
             desc: 'Offline-first emergency rescue platform built in 6 hours at VIDYUT 2K25. Utilizes BLE/Wi-Fi Direct mesh networking with Room DB and Firebase for live SOS alert synchronization on a Google Maps dashboard—entirely offline-capable.',
             stack: ['Android', 'Kotlin', 'Room DB', 'Firebase', 'Google Maps']
         },
         'vibe-streamer': {
             tag: 'Research / Publication',
             title: 'Multi-Vector Guardrails',
-            image: 'assets/project-research.jpg',
+            images: ['assets/project-music-platform.jpg', 'assets/project-robotics.jpg', 'assets/project-smart-city.jpg'],
             desc: 'Peer-reviewed book chapter in IIP Proceedings Vol 6, Book 2. Authored original research on Knowledge Engineering for autonomous systems, proposing a dual-path processing architecture (Probabilistic AI vs. Deterministic Backend) for ethical alignment grounded in NeuralArmor empirical data.',
             stack: ['Research', 'Knowledge Engineering', 'Autonomous Systems']
         },
-        'robotics': null,
-        'smart-city': null,
-        'creative-direction': null
+        'robotics': {
+            tag: 'Systems / AI',
+            title: 'Autonomous Robotics',
+            images: ['assets/project-robotics.jpg', 'assets/project-ai-assistant.jpg', 'assets/project-cyber-dashboard.jpg'],
+            desc: 'A full-stack autonomous navigation system for mobile robots. Developed using ROS2 and C++, utilizing LiDAR-based SLAM and adaptive path planning algorithms to navigate complex dynamic environments.',
+            stack: ['ROS2', 'C++', 'SLAM', 'Python', 'LiDAR']
+        },
+        'smart-city': {
+            tag: 'Data Viz / IoT',
+            title: 'Smart City Dashboard',
+            images: ['assets/project-smart-city.jpg', 'assets/project-cyber-dashboard.jpg', 'assets/project-developer.jpg'],
+            desc: 'A real-time telemetry dashboard for city-wide IoT sensors. Visualizes traffic, air quality, and power consumption using WebSockets and Three.js, processing over 10,000 data points per second.',
+            stack: ['React', 'Three.js', 'WebSockets', 'Go', 'InfluxDB']
+        },
+        'creative-direction': {
+            tag: 'Brand / Design',
+            title: 'Creative Direction',
+            images: ['assets/hero-character.jpg', 'assets/about-portrait.jpg', 'assets/contact-background.jpg'],
+            desc: 'Conceptualized and executed the brand identity and digital assets for a next-generation technology studio. Defined the typographic hierarchy, modern dark-mode aesthetic, and 3D visual storytelling principles.',
+            stack: ['Figma', 'Blender', 'Photoshop', 'Brand Strategy', 'UI/UX']
+        }
     };
 
     /* ==============================================================
@@ -155,14 +173,100 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDesc = document.getElementById('project-modal-desc');
     const modalStack = document.getElementById('project-modal-stack');
 
-    function openProjectModal(id) {
+    // Gallery state variables
+    let currentImages = [];
+    let currentImageIndex = 0;
+    let activeProjectId = null;
+
+    function updateGalleryImage() {
+        if (!currentImages || currentImages.length === 0) return;
+        
+        // Fade transition for the image gallery
+        gsap.to(modalImage, {
+            opacity: 0.1,
+            duration: 0.15,
+            onComplete: () => {
+                modalImage.style.backgroundImage = `url('${currentImages[currentImageIndex]}')`;
+                gsap.to(modalImage, { opacity: 1, duration: 0.25 });
+            }
+        });
+
+        // Update dots
+        const dots = document.getElementById('gallery-dots');
+        if (dots) {
+            const dotElements = dots.querySelectorAll('.gallery-dot');
+            dotElements.forEach((dot, index) => {
+                if (index === currentImageIndex) {
+                    dot.classList.remove('bg-white/30', 'w-2');
+                    dot.classList.add('bg-primary', 'w-6');
+                } else {
+                    dot.classList.remove('bg-primary', 'w-6');
+                    dot.classList.add('bg-white/30', 'w-2');
+                }
+            });
+        }
+    }
+
+    function renderDots() {
+        const dotsContainer = document.getElementById('gallery-dots');
+        if (!dotsContainer) return;
+        dotsContainer.innerHTML = '';
+
+        if (currentImages.length <= 1) {
+            dotsContainer.classList.add('hidden');
+            return;
+        }
+        dotsContainer.classList.remove('hidden');
+
+        currentImages.forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'gallery-dot h-2 rounded-full transition-all duration-300 ';
+            if (index === currentImageIndex) {
+                dot.className += 'bg-primary w-6';
+            } else {
+                dot.className += 'bg-white/30 w-2';
+            }
+            dot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentImageIndex = index;
+                updateGalleryImage();
+            });
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    function openProjectModal(id, cardElement) {
         const data = projectsData[id];
         if (!data || !modal) return;
+        activeProjectId = id;
 
-        modalImage.style.backgroundImage = `url('${data.image}')`;
+        // Reset scroll position of the details content panel
+        const contentScroll = document.getElementById('project-modal-content-scroll');
+        if (contentScroll) contentScroll.scrollTop = 0;
+
+        // Populate images and initialize gallery
+        currentImages = data.images || [data.image];
+        currentImageIndex = 0;
+        modalImage.style.backgroundImage = `url('${currentImages[0]}')`;
+        renderDots();
+
+        // Control buttons visibility
+        const controlsContainer = document.getElementById('gallery-controls');
+        if (controlsContainer) {
+            if (currentImages.length <= 1) {
+                controlsContainer.classList.add('hidden');
+            } else {
+                controlsContainer.classList.remove('hidden');
+            }
+        }
+
+        // Set standard text details
         modalTag.textContent = data.tag;
         modalTitle.textContent = data.title;
         modalDesc.textContent = data.desc;
+        
+        // Stack chips
         modalStack.innerHTML = '';
         data.stack.forEach(tech => {
             const chip = document.createElement('span');
@@ -178,6 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalDesc.setAttribute('data-hacker-text', 'single');
         modalDesc.setAttribute('data-hacker-mode', 'terminal');
 
+        // Show modal layout temporarily to measure target dimension
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         document.body.style.overflow = 'hidden';
@@ -190,16 +295,91 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.sectionMgr?.setScrollEnabled(false);
 
-        gsap.fromTo(modalBackdrop, { opacity: 0 }, { opacity: 1, duration: 0.3 });
-        gsap.fromTo(modalPanel, { opacity: 0, y: 40, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'power3.out' });
+        // Zoom from element transition
+        if (cardElement) {
+            const cardRect = cardElement.getBoundingClientRect();
+            const finalRect = modalPanel.getBoundingClientRect();
+
+            const scaleX = cardRect.width / finalRect.width;
+            const scaleY = cardRect.height / finalRect.height;
+            const translateX = (cardRect.left + cardRect.width / 2) - (finalRect.left + finalRect.width / 2);
+            const translateY = (cardRect.top + cardRect.height / 2) - (finalRect.top + finalRect.height / 2);
+
+            // Hide inner elements momentarily during scale up for premium look
+            gsap.set([modalImage, '#gallery-controls', '#gallery-dots', '#project-modal-content-scroll', modalClose], { opacity: 0 });
+
+            gsap.set(modalPanel, {
+                x: translateX,
+                y: translateY,
+                scaleX: scaleX,
+                scaleY: scaleY,
+                borderRadius: '24px', // match card border radius
+                transformOrigin: 'center center'
+            });
+
+            gsap.fromTo(modalBackdrop, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+            
+            // Expand modal panel
+            gsap.to(modalPanel, {
+                x: 0,
+                y: 0,
+                scaleX: 1,
+                scaleY: 1,
+                borderRadius: '40px',
+                duration: 0.6,
+                ease: 'power3.inOut',
+                onComplete: () => {
+                    // Fade in all inner elements
+                    gsap.to([modalImage, '#project-modal-content-scroll', modalClose], { opacity: 1, duration: 0.3 });
+                    if (currentImages.length > 1) {
+                        gsap.to(['#gallery-controls', '#gallery-dots'], { opacity: 1, duration: 0.3 });
+                    }
+                }
+            });
+        } else {
+            // Fallback standard animation
+            gsap.fromTo(modalBackdrop, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+            gsap.fromTo(modalPanel, { opacity: 0, y: 40, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'power3.out' });
+            gsap.set([modalImage, '#gallery-controls', '#gallery-dots', '#project-modal-content-scroll', modalClose], { opacity: 1 });
+        }
     }
 
     function closeProjectModal() {
         if (!modal) return;
         window.sectionMgr?.setScrollEnabled(true);
-        gsap.to(modalPanel, { opacity: 0, y: 20, scale: 0.97, duration: 0.25, ease: 'power2.in' });
+
+        const card = document.querySelector(`.project-card[data-project="${activeProjectId}"]`);
+        if (card) {
+            const cardRect = card.getBoundingClientRect();
+            const finalRect = modalPanel.getBoundingClientRect();
+
+            const scaleX = cardRect.width / finalRect.width;
+            const scaleY = cardRect.height / finalRect.height;
+            const translateX = (cardRect.left + cardRect.width / 2) - (finalRect.left + finalRect.width / 2);
+            const translateY = (cardRect.top + cardRect.height / 2) - (finalRect.top + finalRect.height / 2);
+
+            // Fade out inner elements first
+            gsap.to([modalImage, '#gallery-controls', '#gallery-dots', '#project-modal-content-scroll', modalClose], {
+                opacity: 0,
+                duration: 0.15
+            });
+
+            // Shrink modal panel back to clicked card
+            gsap.to(modalPanel, {
+                x: translateX,
+                y: translateY,
+                scaleX: scaleX,
+                scaleY: scaleY,
+                borderRadius: '24px',
+                duration: 0.5,
+                ease: 'power3.inOut'
+            });
+        } else {
+            gsap.to(modalPanel, { opacity: 0, y: 20, scale: 0.97, duration: 0.25, ease: 'power2.in' });
+        }
+
         gsap.to(modalBackdrop, {
-            opacity: 0, duration: 0.25, onComplete: () => {
+            opacity: 0, duration: 0.5, onComplete: () => {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 document.body.style.overflow = '';
@@ -207,10 +387,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Set up gallery navigation actions
+    const prevBtn = document.getElementById('gallery-prev');
+    const nextBtn = document.getElementById('gallery-next');
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentImages.length <= 1) return;
+            currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+            updateGalleryImage();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentImages.length <= 1) return;
+            currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+            updateGalleryImage();
+        });
+    }
+
     document.querySelectorAll('.project-card').forEach(card => {
-        card.addEventListener('click', () => {
+        card.addEventListener('click', (e) => {
             const id = card.getAttribute('data-project');
-            openProjectModal(id);
+            openProjectModal(id, card);
         });
     });
 
