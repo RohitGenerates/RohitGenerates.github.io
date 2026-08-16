@@ -78,6 +78,50 @@ export default class SectionManager {
         window.addEventListener('touchend', this._onTouchEnd, {
             passive: true
         });
+
+        this.scrollToast = document.getElementById('scroll-toast');
+        this.toastVisible = false;
+    }
+
+    setEdgeArmed(value, direction = null) {
+        if (this.edgeArmed === value) return;
+        this.edgeArmed = value;
+
+        if (value) {
+            if (!this.scrollToast || this.toastVisible) return;
+            this.toastVisible = true;
+            
+            if (direction === 'up') {
+                this.scrollToast.classList.remove('bottom-8');
+                this.scrollToast.classList.add('top-8');
+            } else {
+                this.scrollToast.classList.remove('top-8');
+                this.scrollToast.classList.add('bottom-8');
+            }
+            
+            const yOffset = direction === 'up' ? 10 : -10;
+            gsap.to(this.scrollToast, {
+                opacity: 1,
+                y: yOffset,
+                duration: 0.3,
+                ease: 'power2.out',
+                overwrite: true
+            });
+        } else {
+            if (!this.scrollToast || !this.toastVisible) return;
+            this.toastVisible = false;
+            
+            const isTop = this.scrollToast.classList.contains('top-8');
+            const yOffset = isTop ? -10 : 10;
+            
+            gsap.to(this.scrollToast, {
+                opacity: 0,
+                y: yOffset,
+                duration: 0.3,
+                ease: 'power2.in',
+                overwrite: true
+            });
+        }
     }
 
     on(event, cb) {
@@ -125,7 +169,7 @@ export default class SectionManager {
         this._resetEdgeResistance();
 
         // Reset edge state
-        this.edgeArmed = false;
+        this.setEdgeArmed(false);
         this.edgeDirection = null;
         this.touchEdgeGestureCompleted = false;
 
@@ -356,7 +400,7 @@ export default class SectionManager {
         -------------------------------------------------- */
 
         if (!isAtEdge) {
-            this.edgeArmed = false;
+            this.setEdgeArmed(false);
             this.edgeDirection = null;
             this.edgeStretch = 0;
 
@@ -380,7 +424,7 @@ export default class SectionManager {
             this.edgeArmed &&
             currentDirection !== this.edgeDirection
         ) {
-            this.edgeArmed = false;
+            this.setEdgeArmed(false);
             this.edgeDirection = null;
 
             this._releaseEdgeResistance();
@@ -393,7 +437,7 @@ export default class SectionManager {
         -------------------------------------------------- */
 
         if (!this.edgeArmed) {
-            this.edgeArmed = true;
+            this.setEdgeArmed(true, currentDirection);
             this.edgeDirection = currentDirection;
             this.edgeStretch = 0;
 
@@ -415,7 +459,7 @@ export default class SectionManager {
         if (isNewGesture) {
             const direction = this.edgeDirection;
 
-            this.edgeArmed = false;
+            this.setEdgeArmed(false);
             this.edgeDirection = null;
 
             this._resetEdgeResistance();
@@ -492,7 +536,7 @@ export default class SectionManager {
         -------------------------------------------------- */
 
         if (!isAtEdge) {
-            this.edgeArmed = false;
+            this.setEdgeArmed(false);
             this.edgeDirection = null;
             this.touchEdgeGestureCompleted = false;
 
@@ -515,7 +559,7 @@ export default class SectionManager {
             this.edgeArmed &&
             direction !== this.edgeDirection
         ) {
-            this.edgeArmed = false;
+            this.setEdgeArmed(false);
             this.edgeDirection = null;
             this.touchEdgeGestureCompleted = false;
 
@@ -539,7 +583,7 @@ export default class SectionManager {
             const transitionDirection =
                 this.edgeDirection;
 
-            this.edgeArmed = false;
+            this.setEdgeArmed(false);
             this.edgeDirection = null;
             this.touchEdgeGestureCompleted = false;
 
@@ -559,7 +603,7 @@ export default class SectionManager {
         -------------------------------------------------- */
 
         if (!this.edgeArmed) {
-            this.edgeArmed = true;
+            this.setEdgeArmed(true, direction);
             this.edgeDirection = direction;
             this.edgeStretch = 0;
         }
@@ -604,7 +648,7 @@ export default class SectionManager {
         -------------------------------------------------- */
 
         if (direction !== this.edgeDirection) {
-            this.edgeArmed = false;
+            this.setEdgeArmed(false);
             this.edgeDirection = null;
             this.touchEdgeGestureCompleted = false;
 
@@ -671,7 +715,7 @@ export default class SectionManager {
         this.scrollEnabled = enabled;
 
         if (!enabled) {
-            this.edgeArmed = false;
+            this.setEdgeArmed(false);
             this.edgeDirection = null;
             this.touchEdgeGestureCompleted = false;
 
