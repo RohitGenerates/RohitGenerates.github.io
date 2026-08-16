@@ -555,33 +555,6 @@ class HackerImage {
         this.element = element;
         this.img = element.querySelector('img');
 
-        this.triggerMode =
-            element.getAttribute('data-hacker-image') || 'single';
-
-        /*
-         * Direction the rows travel:
-         *
-         * left-to-right
-         * right-to-left
-         */
-        this.scanDirection =
-            element.getAttribute('data-hacker-scan') || 'left-to-right';
-
-        /*
-         * Direction the rows are processed:
-         *
-         * top-to-bottom
-         * bottom-to-top
-         */
-        this.rowDirection =
-            element.getAttribute('data-hacker-direction') || 'top-to-bottom';
-
-        /*
-         * Show the amber scanner cursor.
-         */
-        this.showCursor =
-            element.getAttribute('data-hacker-cursor') !== 'false';
-
         if (!this.img) return;
 
         this.canvas = document.createElement('canvas');
@@ -589,76 +562,29 @@ class HackerImage {
 
         Object.assign(this.canvas.style, {
             position: 'absolute',
-            top: '0',
-            left: '0',
+            inset: '0',
             width: '100%',
             height: '100%',
             pointerEvents: 'none',
-            zIndex: '20',
-            opacity: '1'
+            zIndex: '20'
         });
 
         this.element.appendChild(this.canvas);
-
         this.ctx = this.canvas.getContext('2d');
 
-        /*
-         * Hide original image.
-         * Canvas will reveal it progressively.
-         */
         this.img.style.opacity = '0';
-        this.img.style.transition = 'opacity 0.4s ease';
 
-        /*
-         * Animation state
-         */
         this.progress = 0;
-        this.lastTime = performance.now();
-
+        this.duration = 2000;
         this.isAnimating = false;
         this.hasPlayed = false;
         this.isIntersecting = false;
-        this.processedByQueue = false;
-
+        this.loopTimeout = null;
         this.playPromise = null;
         this.resolvePlay = null;
 
-        this.loopTimeout = null;
-
-        /*
-         * ------------------------------------------
-         * TERMINAL EFFECT SETTINGS
-         * ------------------------------------------
-         */
-
-        // Height of each decoded line in pixels.
-        this.rowHeight = 15;
-
-        // Total animation duration.
-        this.duration = 7000;
-
-        // Dark amber static intensity.
-        this.staticOpacity = 0.95;
-
-        // Amount of static generated per cell.
-        this.staticDensity = 0.42;
-
-        // Size of static characters.
-        this.staticFontSize = 8;
-
-        // Amber used by the terminal effect.
-        this.amber = '#e9c400';
-
-        // Dark background.
-        this.background = '#11100b';
-
-        /*
-         * Intersection observer
-         */
         this.intersectionObserver = new IntersectionObserver(
-            (entries) => {
-                const entry = entries[0];
-
+            ([entry]) => {
                 this.isIntersecting = entry.isIntersecting;
 
                 if (this.isIntersecting) {
@@ -667,51 +593,32 @@ class HackerImage {
                     this.stop();
                 }
             },
-            {
-                threshold: 0.1
-            }
+            { threshold: 0.1 }
         );
+
+        this.triggerMode =
+            element.getAttribute('data-hacker-image') || 'single';
 
         this.intersectionObserver.observe(this.element);
 
-        this._renderLoop = this._renderLoop.bind(this);
-
-        /*
-         * Keep canvas dimensions synchronized.
-         */
         this.resizeObserver = new ResizeObserver(() => {
-            if (!this.isAnimating) {
-                this._resizeCanvas();
-            }
+            if (!this.isAnimating) this._resizeCanvas();
         });
 
         this.resizeObserver.observe(this.element);
-    }
 
-    /*
-     * ------------------------------------------
-     * RESIZE
-     * ------------------------------------------
-     */
+        this._renderLoop = this._renderLoop.bind(this);
+    }
 
     _resizeCanvas() {
         const width = this.element.clientWidth || 300;
         const height = this.element.clientHeight || 300;
 
-        if (
-            this.canvas.width !== width ||
-            this.canvas.height !== height
-        ) {
+        if (this.canvas.width !== width || this.canvas.height !== height) {
             this.canvas.width = width;
             this.canvas.height = height;
         }
     }
-
-    /*
-     * ------------------------------------------
-     * PLAY
-     * ------------------------------------------
-     */
 
     play() {
         if (this.isAnimating) {
@@ -726,7 +633,7 @@ class HackerImage {
         this.progress = 0;
         this.isAnimating = true;
 
-        this.playPromise = new Promise((resolve) => {
+        this.playPromise = new Promise(resolve => {
             this.resolvePlay = resolve;
         });
 
@@ -736,17 +643,10 @@ class HackerImage {
         this._resizeCanvas();
 
         this.lastTime = performance.now();
-
         requestAnimationFrame(this._renderLoop);
 
         return this.playPromise;
     }
-
-    /*
-     * ------------------------------------------
-     * STOP
-     * ------------------------------------------
-     */
 
     stop() {
         this.isAnimating = false;
@@ -760,17 +660,12 @@ class HackerImage {
         this.img.style.opacity = '1';
         this.canvas.style.opacity = '0';
 
-        if (
-            this.canvas.width > 0 &&
-            this.canvas.height > 0
-        ) {
-            this.ctx.clearRect(
-                0,
-                0,
-                this.canvas.width,
-                this.canvas.height
-            );
-        }
+        this.ctx.clearRect(
+            0,
+            0,
+            this.canvas.width,
+            this.canvas.height
+        );
 
         if (this.resolvePlay) {
             this.resolvePlay();
@@ -778,24 +673,15 @@ class HackerImage {
         }
     }
 
-    /*
-     * ------------------------------------------
-     * CHECK / PLAY
-     * ------------------------------------------
-     */
-
     checkAndPlay() {
         if (!this.isIntersecting) return;
 
-        if (
-            this.triggerMode === 'single' &&
-            this.hasPlayed
-        ) {
+        if (this.triggerMode === 'single' && this.hasPlayed) {
             return;
         }
 
-        const sectionEl = this.element.closest('section');
-        const sectionId = sectionEl ? sectionEl.id : null;
+        const section = this.element.closest('section');
+        const sectionId = section ? section.id : null;
 
         if (!sectionId) {
             this.play();
@@ -813,68 +699,42 @@ class HackerImage {
 
         if (!isSectionActive) return;
 
-        const isQueueRunning =
+        const queueRunning =
             window.activeSectionQueues &&
             window.activeSectionQueues[sectionId];
 
-        if (isQueueRunning) {
-            if (this.processedByQueue) {
-                this.play();
+        if (queueRunning && !this.processedByQueue) {
+            return;
+        }
 
-                if (this.triggerMode === 'single') {
-                    this.hasPlayed = true;
-                }
-            }
-        } else {
-            this.play();
+        this.play();
 
-            if (this.triggerMode === 'single') {
-                this.hasPlayed = true;
-            }
+        if (this.triggerMode === 'single') {
+            this.hasPlayed = true;
         }
     }
 
-    /*
-     * ------------------------------------------
-     * RESET
-     * ------------------------------------------
-     */
-
     reset() {
         this.stop();
-
         this.hasPlayed = false;
         this.processedByQueue = false;
-
         this.img.style.opacity = '0';
     }
-
-    /*
-     * ------------------------------------------
-     * ANIMATION LOOP
-     * ------------------------------------------
-     */
 
     _renderLoop(time) {
         if (!this.isAnimating) return;
 
         const dt = time - this.lastTime;
-
         this.lastTime = time;
 
         this.progress += dt / this.duration;
+        this.progress = Math.min(this.progress, 1);
+
+        this._draw();
 
         if (this.progress >= 1) {
-            this.progress = 1;
-
-            this._draw();
-
             this.isAnimating = false;
 
-            /*
-             * Animation finished.
-             * Let the real image take over.
-             */
             this.img.style.opacity = '1';
             this.canvas.style.opacity = '0';
 
@@ -883,542 +743,76 @@ class HackerImage {
                 this.resolvePlay = null;
             }
 
-            /*
-             * LOOP MODE
-             */
-            if (
-                this.triggerMode === 'loop' &&
-                this.isIntersecting
-            ) {
+            if (this.triggerMode === 'loop' && this.isIntersecting) {
                 this.loopTimeout = setTimeout(() => {
-                    if (
-                        this.triggerMode === 'loop' &&
-                        this.isIntersecting
-                    ) {
-                        this.play();
-                    }
+                    if (this.isIntersecting) this.play();
                 }, 4000);
             }
 
             return;
         }
 
-        this._draw();
-
         requestAnimationFrame(this._renderLoop);
     }
-
-    /*
-     * ------------------------------------------
-     * MAIN DRAW
-     * ------------------------------------------
-     */
 
     _draw() {
         const W = this.canvas.width;
         const H = this.canvas.height;
 
-        if (W <= 0 || H <= 0) return;
+        if (!W || !H || !this.img.complete) return;
 
         this.ctx.clearRect(0, 0, W, H);
 
-        /*
-         * Background.
-         */
-        this.ctx.fillStyle = this.background;
+        const revealY = H * this.progress;
 
-        this.ctx.fillRect(
-            0,
-            0,
-            W,
-            H
-        );
+        // Reveal image from top to bottom.
+        if (revealY > 0) {
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.rect(0, 0, W, revealY);
+            this.ctx.clip();
 
-        /*
-         * Draw the terminal static first.
-         */
-        this._drawStatic(W, H);
+            this.ctx.drawImage(
+                this.img,
+                0,
+                0,
+                W,
+                H
+            );
 
-        /*
-         * Draw the progressively revealed image.
-         */
-        this._drawImageReveal(W, H);
-
-        /*
-         * Draw scanning cursor last.
-         */
-        if (this.showCursor) {
-            this._drawCursor(W, H);
-        }
-    }
-
-    /*
-     * ------------------------------------------
-     * TERMINAL STATIC
-     * ------------------------------------------
-     *
-     * This replaces the old 0/1 matrix.
-     *
-     * It fills the entire unrevealed image with
-     * subtle dark amber terminal noise.
-     */
-
-    _drawStatic(W, H) {
-        this.ctx.save();
-
-        /*
-         * Dark amber base.
-         */
-        this.ctx.fillStyle =
-            `rgba(55, 47, 5, ${this.staticOpacity})`;
-
-        this.ctx.fillRect(
-            0,
-            0,
-            W,
-            H
-        );
-
-        /*
-         * Tiny amber terminal characters.
-         */
-        this.ctx.font =
-            `bold ${this.staticFontSize}px monospace`;
-
-        this.ctx.textBaseline = 'top';
-
-        const cellW = 9;
-        const cellH = 8;
-
-        /*
-         * Deterministic noise.
-         *
-         * We don't use Math.random() here because that
-         * would make the static completely change every
-         * frame.
-         */
-        for (
-            let y = 0;
-            y < H;
-            y += cellH
-        ) {
-            for (
-                let x = 0;
-                x < W;
-                x += cellW
-            ) {
-                const noise =
-                    Math.sin(
-                        x * 12.9898 +
-                        y * 78.233
-                    ) *
-                    43758.5453;
-
-                const random =
-                    noise -
-                    Math.floor(noise);
-
-                if (
-                    random <
-                    this.staticDensity
-                ) {
-                    /*
-                     * Mostly very subtle amber.
-                     */
-                    const brightness =
-                        0.08 +
-                        random * 0.35;
-
-                    this.ctx.fillStyle =
-                        `rgba(233, 196, 0, ${brightness})`;
-
-                    /*
-                     * Terminal characters.
-                     *
-                     * More varied than just 0/1.
-                     */
-                    const chars =
-                        '01+*/<>[]{}$#@%:;';
-
-                    const index =
-                        Math.floor(
-                            random *
-                            chars.length
-                        );
-
-                    this.ctx.fillText(
-                        chars[index],
-                        x,
-                        y
-                    );
-                }
-            }
+            this.ctx.restore();
         }
 
-        /*
-         * Very subtle horizontal CRT lines.
-         */
-        this.ctx.fillStyle =
-            'rgba(233, 196, 0, 0.035)';
+        // Amber horizontal scanning line.
+        if (this.progress < 1) {
+            this.ctx.save();
 
-        for (
-            let y = 0;
-            y < H;
-            y += 4
-        ) {
+            this.ctx.fillStyle = '#e9c400';
+            this.ctx.shadowColor = '#e9c400';
+            this.ctx.shadowBlur = 12;
+
             this.ctx.fillRect(
                 0,
-                y,
+                revealY - 1,
                 W,
-                1
+                2
             );
-        }
 
-        this.ctx.restore();
+            this.ctx.restore();
+        }
     }
-
-    /*
-     * ------------------------------------------
-     * IMAGE REVEAL
-     * ------------------------------------------
-     *
-     * The important part.
-     *
-     * We divide the image into horizontal rows.
-     *
-     * Each row gets completely revealed from one
-     * side before the next row begins.
-     */
-
-    _drawImageReveal(W, H) {
-        if (
-            !this.img.complete ||
-            this.img.naturalWidth === 0
-        ) {
-            return;
-        }
-
-        const rowHeight = this.rowHeight;
-
-        const totalRows =
-            Math.ceil(H / rowHeight);
-
-        /*
-         * Overall progress mapped to rows.
-         */
-        const exactRow =
-            this.progress * totalRows;
-
-        const completedRows =
-            Math.floor(exactRow);
-
-        const currentRowProgress =
-            exactRow - completedRows;
-
-        this.ctx.save();
-
-        /*
-         * Draw completed rows.
-         */
-        if (completedRows > 0) {
-            this._drawCompletedRows(
-                W,
-                H,
-                completedRows,
-                totalRows
-            );
-        }
-
-        /*
-         * Draw the currently scanning row.
-         */
-        if (
-            completedRows < totalRows
-        ) {
-            this._drawCurrentRow(
-                W,
-                H,
-                completedRows,
-                currentRowProgress
-            );
-        }
-
-        this.ctx.restore();
-    }
-
-    /*
-     * ------------------------------------------
-     * COMPLETED ROWS
-     * ------------------------------------------
-     */
-
-    _drawCompletedRows(
-        W,
-        H,
-        completedRows,
-        totalRows
-    ) {
-        this.ctx.save();
-
-        /*
-         * Create clipping region containing
-         * every completed row.
-         */
-
-        this.ctx.beginPath();
-
-        if (
-            this.rowDirection ===
-            'bottom-to-top'
-        ) {
-            const completedHeight =
-                completedRows *
-                this.rowHeight;
-
-            this.ctx.rect(
-                0,
-                H - completedHeight,
-                W,
-                completedHeight
-            );
-        } else {
-            const completedHeight =
-                completedRows *
-                this.rowHeight;
-
-            this.ctx.rect(
-                0,
-                0,
-                W,
-                completedHeight
-            );
-        }
-
-        this.ctx.clip();
-
-        this.ctx.drawImage(
-            this.img,
-            0,
-            0,
-            W,
-            H
-        );
-
-        this.ctx.restore();
-    }
-
-    /*
-     * ------------------------------------------
-     * CURRENT ROW
-     * ------------------------------------------
-     */
-
-    _drawCurrentRow(
-        W,
-        H,
-        rowIndex,
-        rowProgress
-    ) {
-        const rowHeight = this.rowHeight;
-
-        let y;
-
-        if (
-            this.rowDirection ===
-            'bottom-to-top'
-        ) {
-            y =
-                H -
-                ((rowIndex + 1) * rowHeight);
-        } else {
-            y =
-                rowIndex * rowHeight;
-        }
-
-        /*
-         * Prevent the final row from exceeding canvas.
-         */
-        const actualHeight =
-            Math.min(
-                rowHeight,
-                H - y
-            );
-
-        if (actualHeight <= 0) return;
-
-        /*
-         * Convert progress to width.
-         */
-        const revealWidth =
-            W * rowProgress;
-
-        if (revealWidth <= 0) return;
-
-        this.ctx.save();
-
-        this.ctx.beginPath();
-
-        if (
-            this.scanDirection ===
-            'right-to-left'
-        ) {
-            this.ctx.rect(
-                W - revealWidth,
-                y,
-                revealWidth,
-                actualHeight
-            );
-        } else {
-            this.ctx.rect(
-                0,
-                y,
-                revealWidth,
-                actualHeight
-            );
-        }
-
-        this.ctx.clip();
-
-        this.ctx.drawImage(
-            this.img,
-            0,
-            0,
-            W,
-            H
-        );
-
-        this.ctx.restore();
-    }
-
-    /*
-     * ------------------------------------------
-     * SCANNER CURSOR
-     * ------------------------------------------
-     */
-
-    _drawCursor(W, H) {
-        const totalRows =
-            Math.ceil(H / this.rowHeight);
-
-        const exactRow =
-            this.progress * totalRows;
-
-        const rowIndex =
-            Math.floor(exactRow);
-
-        /*
-         * Animation progress within current row.
-         */
-        const rowProgress =
-            exactRow - rowIndex;
-
-        if (
-            rowIndex >= totalRows
-        ) {
-            return;
-        }
-
-        let y;
-
-        if (
-            this.rowDirection ===
-            'bottom-to-top'
-        ) {
-            y =
-                H -
-                ((rowIndex + 1) *
-                    this.rowHeight);
-        } else {
-            y =
-                rowIndex *
-                this.rowHeight;
-        }
-
-        /*
-         * Cursor position across current row.
-         */
-        let x;
-
-        if (
-            this.scanDirection ===
-            'right-to-left'
-        ) {
-            x =
-                W -
-                (W * rowProgress);
-        } else {
-            x =
-                W * rowProgress;
-        }
-
-        this.ctx.save();
-
-        /*
-         * Main cursor.
-         */
-        this.ctx.fillStyle =
-            this.amber;
-
-        /*
-         * Vertical scanner head.
-         */
-        this.ctx.fillRect(
-            x - 1,
-            y - 2,
-            2,
-            this.rowHeight + 4
-        );
-
-        /*
-         * Small glow.
-         */
-        this.ctx.shadowColor =
-            this.amber;
-
-        this.ctx.shadowBlur = 8;
-
-        this.ctx.fillRect(
-            x - 1,
-            y - 1,
-            2,
-            this.rowHeight + 2
-        );
-
-        this.ctx.shadowBlur = 0;
-
-        this.ctx.restore();
-    }
-
-    /*
-     * ------------------------------------------
-     * DESTROY
-     * ------------------------------------------
-     */
 
     destroy() {
         this.stop();
 
-        if (this.intersectionObserver) {
-            this.intersectionObserver.disconnect();
-        }
-
-        if (this.resizeObserver) {
-            this.resizeObserver.disconnect();
-        }
+        this.intersectionObserver?.disconnect();
+        this.resizeObserver?.disconnect();
 
         if (this.loopTimeout) {
             clearTimeout(this.loopTimeout);
-            this.loopTimeout = null;
         }
 
-        if (
-            this.canvas &&
-            this.canvas.parentNode
-        ) {
-            this.canvas.parentNode.removeChild(
-                this.canvas
-            );
-        }
+        this.canvas?.remove();
 
         this.img.style.opacity = '1';
     }
@@ -1435,12 +829,16 @@ export function applyHackerText(el) {
 }
 
 export function initHackerText(container = document) {
-    const textElements = container.querySelectorAll('[data-hacker-text]');
+    const textElements =
+        container.querySelectorAll('[data-hacker-text]');
+
     textElements.forEach(el => {
         applyHackerText(el);
     });
 
-    const imgElements = container.querySelectorAll('[data-hacker-image]');
+    const imgElements =
+        container.querySelectorAll('[data-hacker-image]');
+
     imgElements.forEach(el => {
         if (el.__hackerImageInstance) {
             el.__hackerImageInstance.stop();

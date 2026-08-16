@@ -5,7 +5,7 @@ export default class AnimationManager {
     }
 
     register(sectionId, selector, config = {}) {
-        const { duration = 1.2, ease = 'power2.out', stagger = 0.1, ...rest } = config;
+        const { duration = 1.0, ease = 'power2.out', stagger = 0.1, ...rest } = config;
         const elements = gsap.utils.toArray(selector);
         if (!elements.length) return;
 

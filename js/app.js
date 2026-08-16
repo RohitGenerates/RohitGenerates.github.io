@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const exitTl = gsap.timeline({
                         onComplete: () => {
                             if (bootScreen) bootScreen.style.display = 'none';
-                            
+
                             // Initialize portfolio landing section animation
                             sectionMgr.animationManager.play('home-section').then(() => {
                                 if (window.playHackerTextsInSection) {
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         yPercent: -100,
                         duration: 0.8,
                         ease: 'power3.inOut',
-                        delay: 0.2
+                        delay: 0.3
                     });
                 }
             });
