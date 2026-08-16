@@ -259,6 +259,12 @@ class HackerText {
 
     reset() {
         this.stop();
+        
+        if (this.triggerMode === 'single' && this.hasPlayed) {
+            this.processedByQueue = false;
+            return;
+        }
+        
         this.hasPlayed = false;
         this.processedByQueue = false;
         this.chars.forEach(c => {
@@ -716,6 +722,12 @@ class HackerImage {
 
     reset() {
         this.stop();
+
+        if (this.triggerMode === 'single' && this.hasPlayed) {
+            this.processedByQueue = false;
+            return;
+        }
+
         this.hasPlayed = false;
         this.processedByQueue = false;
         this.img.style.opacity = '0';
