@@ -86,11 +86,21 @@ export default class SectionManager {
     setEdgeArmed(value, direction = null) {
         if (this.edgeArmed === value) return;
         this.edgeArmed = value;
-
         if (value) {
             if (!this.scrollToast || this.toastVisible) return;
+            if (
+                direction === 'up' &&
+                this.currentIndex === 0
+            ) {
+                return;
+            }
+            if (
+                direction === 'down' &&
+                this.currentIndex === this.sections.length - 1
+            ) {
+                return;
+            }
             this.toastVisible = true;
-            
             if (direction === 'up') {
                 this.scrollToast.classList.remove('bottom-8');
                 this.scrollToast.classList.add('top-8');
@@ -98,8 +108,9 @@ export default class SectionManager {
                 this.scrollToast.classList.remove('top-8');
                 this.scrollToast.classList.add('bottom-8');
             }
-            
+
             const yOffset = direction === 'up' ? 10 : -10;
+
             gsap.to(this.scrollToast, {
                 opacity: 1,
                 y: yOffset,
@@ -109,11 +120,12 @@ export default class SectionManager {
             });
         } else {
             if (!this.scrollToast || !this.toastVisible) return;
+
             this.toastVisible = false;
-            
+
             const isTop = this.scrollToast.classList.contains('top-8');
             const yOffset = isTop ? -10 : 10;
-            
+
             gsap.to(this.scrollToast, {
                 opacity: 0,
                 y: yOffset,
