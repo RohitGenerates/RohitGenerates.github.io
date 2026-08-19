@@ -5,52 +5,52 @@ document.addEventListener('DOMContentLoaded', () => {
        PROJECT DATA — powers the click-to-open detail cards
        ============================================================== */
     const projectsData = {
-        'neon-genesis': {
-            tag: 'Major Project / Security',
+        'neural-armor': {
+            tag: 'Major Project / Cybersecurity',
             title: 'NeuralArmor',
-            images: ['assets/project-ai-assistant.jpg', 'assets/project-cyber-dashboard.jpg', 'assets/project-developer.jpg'],
-            desc: 'Model-agnostic security reverse proxy for autonomous perception systems. Engineered in FastAPI with a CVPR 2025 Adversarial Consistency Distillation purifier, achieving 98% latency reduction (5s → 0.1s). Red Teaming scanner using ART against PGD/FGSM attacks with Grad-CAM XAI forensic visualization.',
+            images: ['assets/project-ai-assistant.webp', 'assets/project-cyber-dashboard.webp', 'assets/project-developer.webp'],
+            desc: 'Model-agnostic security reverse proxy for autonomous perception systems. Built with FastAPI, featuring OSCP-based adversarial purification, KL-divergence detection, and ART-based red teaming with PGD/FGSM attacks. Includes Grad-CAM forensic visualization and real-time security telemetry.',
             stack: ['FastAPI', 'Python', 'ART', 'CVPR 2025', 'Grad-CAM XAI']
         },
-        'system-archive': {
-            tag: 'Academic / Privacy',
+        'digital-footprint-analyzer': {
+            tag: 'Cybersecurity / Privacy',
             title: 'Digital Footprint Analyzer',
-            images: ['assets/project-cyber-dashboard.jpg', 'assets/project-developer.jpg', 'assets/project-music-platform.jpg'],
+            images: ['assets/project-cyber-dashboard.webp', 'assets/project-developer.webp', 'assets/project-music-platform.webp'],
             desc: 'Real-time web privacy risk auditor built with mitmproxy, Flask, and a Manifest V3 Chrome extension. Tracks fingerprinting signals and cookies to compute live 0–100 domain risk scores via non-intrusive network analysis and PostgreSQL visualization.',
             stack: ['Python', 'Flask', 'mitmproxy', 'PostgreSQL', 'Chrome Extension']
         },
-        'digital-soul': {
-            tag: 'Hackathon / 2nd Place',
+        'connect-net': {
+            tag: 'Emergency Tech / Hackathon',
             title: 'ConnectNet',
-            images: ['assets/project-developer.jpg', 'assets/project-music-platform.jpg', 'assets/project-robotics.jpg'],
+            images: ['assets/project-developer.webp', 'assets/project-music-platform.webp', 'assets/project-robotics.webp'],
             desc: 'Offline-first emergency rescue platform built in 6 hours at VIDYUT 2K25. Utilizes BLE/Wi-Fi Direct mesh networking with Room DB and Firebase for live SOS alert synchronization on a Google Maps dashboard—entirely offline-capable.',
             stack: ['Android', 'Kotlin', 'Room DB', 'Firebase', 'Google Maps']
         },
         'vibe-streamer': {
             tag: 'Research / Publication',
             title: 'Multi-Vector Guardrails',
-            images: ['assets/project-music-platform.jpg', 'assets/project-robotics.jpg', 'assets/project-smart-city.jpg'],
+            images: ['assets/project-music-platform.webp', 'assets/project-robotics.webp', 'assets/project-smart-city.webp'],
             desc: 'Peer-reviewed book chapter in IIP Proceedings Vol 6, Book 2. Authored original research on Knowledge Engineering for autonomous systems, proposing a dual-path processing architecture (Probabilistic AI vs. Deterministic Backend) for ethical alignment grounded in NeuralArmor empirical data.',
             stack: ['Research', 'Knowledge Engineering', 'Autonomous Systems']
         },
         'robotics': {
             tag: 'Systems / AI',
             title: 'Autonomous Robotics',
-            images: ['assets/project-robotics.jpg', 'assets/project-ai-assistant.jpg', 'assets/project-cyber-dashboard.jpg'],
+            images: ['assets/project-robotics.webp', 'assets/project-ai-assistant.webp', 'assets/project-cyber-dashboard.webp'],
             desc: 'A full-stack autonomous navigation system for mobile robots. Developed using ROS2 and C++, utilizing LiDAR-based SLAM and adaptive path planning algorithms to navigate complex dynamic environments.',
             stack: ['ROS2', 'C++', 'SLAM', 'Python', 'LiDAR']
         },
         'smart-city': {
             tag: 'Data Viz / IoT',
             title: 'Smart City Dashboard',
-            images: ['assets/project-smart-city.jpg', 'assets/project-cyber-dashboard.jpg', 'assets/project-developer.jpg'],
+            images: ['assets/project-smart-city.webp', 'assets/project-cyber-dashboard.webp', 'assets/project-developer.webp'],
             desc: 'A real-time telemetry dashboard for city-wide IoT sensors. Visualizes traffic, air quality, and power consumption using WebSockets and Three.js, processing over 10,000 data points per second.',
             stack: ['React', 'Three.js', 'WebSockets', 'Go', 'InfluxDB']
         },
         'creative-direction': {
             tag: 'Brand / Design',
             title: 'Creative Direction',
-            images: ['assets/hero-character.jpg', 'assets/about-portrait.jpg', 'assets/contact-background.jpg'],
+            images: ['assets/hero-character.webp', 'assets/about-portrait.webp', 'assets/contact-background.webp'],
             desc: 'Conceptualized and executed the brand identity and digital assets for a next-generation technology studio. Defined the typographic hierarchy, modern dark-mode aesthetic, and 3D visual storytelling principles.',
             stack: ['Figma', 'Blender', 'Photoshop', 'Brand Strategy', 'UI/UX']
         }
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateGalleryImage() {
         if (!currentImages || currentImages.length === 0) return;
-        
+
         // Fade transition for the image gallery
         gsap.to(modalImage, {
             opacity: 0.1,
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTag.textContent = data.tag;
         modalTitle.textContent = data.title;
         modalDesc.textContent = data.desc;
-        
+
         // Stack chips
         modalStack.innerHTML = '';
         data.stack.forEach(tech => {
@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             gsap.fromTo(modalBackdrop, { opacity: 0 }, { opacity: 1, duration: 0.3 });
-            
+
             // Expand modal panel
             gsap.to(modalPanel, {
                 x: 0,

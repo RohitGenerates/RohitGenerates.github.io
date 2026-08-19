@@ -119,7 +119,7 @@
     </div>
 
     <div id="scrub-bg" class="fixed inset-0 overflow-hidden pointer-events-none">
-        <img id="scrub-bg-img" src="assets/hero-character.jpg" alt=""
+        <img id="scrub-bg-img" src="assets/hero-character.webp" alt=""
             class="absolute inset-0 w-full h-full object-cover opacity-100" />
         <video id="scrub-bg-video" class="absolute inset-0 w-full h-full object-cover opacity-0" muted playsinline
             preload="auto">
@@ -227,18 +227,23 @@
                                         </div>
                                         <div class="flex items-center gap-gutter">
                                             <button id="explore-works-btn"
-                                                class="group relative flex items-center gap-base px-8 py-4 bg-primary text-on-primary rounded-full font-label-sm text-label-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(233,196,0,0.3)]">
+                                                class="group relative flex items-center gap-base px-8 py-4 bg-primary text-on-primary rounded-full font-label-sm text-label-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(233,196,0,0.3)]"
+                                                data-hacker-text="single" data-hacker-mode="scramble"
+                                                data-hacker-order="1">
                                                 Explore Works
                                                 <div
                                                     class="w-8 h-8 rounded-full bg-on-primary/20 flex items-center justify-center group-hover:rotate-45 transition-transform">
                                                     <span
-                                                        class="material-symbols-outlined text-[18px]">arrow_outward</span>
+                                                        class="material-symbols-outlined text-[18px] hacker-ignore">arrow_outward</span>
                                                 </div>
                                             </button>
                                             <button id="view-manifesto-btn"
-                                                class="font-label-sm text-label-sm text-on-surface hover:text-primary transition-colors flex items-center gap-2">
+                                                class="font-label-sm text-label-sm text-on-surface hover:text-primary transition-colors flex items-center gap-2"
+                                                data-hacker-text="single" data-hacker-mode="scramble"
+                                                data-hacker-order="1">
                                                 VIEW MANIFESTO
-                                                <span class="material-symbols-outlined text-[18px]">play_circle</span>
+                                                <span class=" material-symbols-outlined text-[18px]
+                                                hacker-ignore">play_circle</span>
                                             </button>
                                         </div>
                                     </div>
@@ -299,10 +304,11 @@
                                                 <div>
                                                     <div class="text-[32px] font-display-xl text-on-surface mb-2"
                                                         data-hacker-text="single" data-hacker-mode="scramble"
-                                                        data-hacker-order="3">9
+                                                        data-hacker-order="2">9
                                                     </div>
-                                                    <div
-                                                        class="font-label-sm text-label-sm text-on-surface-variant uppercase">
+                                                    <div class="font-label-sm text-label-sm text-on-surface-variant uppercase"
+                                                        data-hacker-text="single" data-hacker-mode="terminal"
+                                                        data-hacker-order="2">
                                                         <!-- data-hacker-text="single" data-hacker-mode="terminal"> -->
                                                         Major Projects
                                                     </div>
@@ -323,16 +329,16 @@
                                                 <div class="relative z-10">
                                                     <div class="text-[32px] font-display-xl text-on-primary mb-1"
                                                         data-hacker-text="single" data-hacker-mode="scramble"
-                                                        data-hacker-order="3">
+                                                        data-hacker-order="2">
                                                         Backend</div>
                                                     <div class="font-label-sm text-label-sm text-on-primary/70 uppercase"
                                                         data-hacker-text="single" data-hacker-mode="terminal"
-                                                        data-hacker-order="3">
+                                                        data-hacker-order="2">
                                                         Security & Systems</div>
                                                 </div>
                                             </div>
                                             <div
-                                                class="col-span-2 group p-8 bg-surface-container-highest/30 backdrop-blur-xl rounded-[32px] border border-white/5 hover:border-primary/30 transition-all">
+                                                class="project-hover-card col-span-2 group p-8 bg-surface-container-highest/30 backdrop-blur-xl rounded-[32px] border border-white/5 hover:border-primary/30 transition-all">
                                                 <div class="flex items-center justify-between mb-6">
                                                     <div class="flex -space-x-4">
                                                         <div
@@ -348,17 +354,19 @@
                                                     <div
                                                         class="px-4 py-1 rounded-full bg-primary/10 border border-primary/20">
                                                         <span
-                                                            class="text-primary font-label-sm text-[10px] uppercase tracking-tighter">Current
+                                                            class="text-primary font-label-sm text-[10px] uppercase tracking-tighter"
+                                                            data-hacker-text="single" data-hacker-mode="terminal"
+                                                            data-hacker-order="2">Current
                                                             Experience</span>
                                                     </div>
                                                 </div>
                                                 <h3 class="font-headline-lg text-[24px] text-on-surface mb-2"
                                                     data-hacker-text="single" data-hacker-mode="scramble"
-                                                    data-hacker-order="3">Java
+                                                    data-hacker-order="2">Java
                                                     Development Intern</h3>
                                                 <p class="font-body-md text-on-surface-variant text-sm line-clamp-2"
                                                     data-hacker-text="single" data-hacker-mode="terminal"
-                                                    data-hacker-order="3">
+                                                    data-hacker-order="2">
                                                     Oasis Infobyte (AICTE OIB-SIP) | Feb – Mar 2025</p>
                                             </div>
                                         </div>
@@ -373,7 +381,7 @@
                     <div class="grid grid-cols-12 gap-gutter">
                         <div class="col-span-12 lg:col-span-8 group relative overflow-hidden rounded-[40px] h-[500px]">
                             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                                style="background-image: url('assets/project-cyber-dashboard.jpg')"></div>
+                                style="background-image: url('assets/project-cyber-dashboard.webp')"></div>
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent">
                             </div>
@@ -391,7 +399,8 @@
                         <div
                             class="col-span-12 lg:col-span-4 bg-surface-container-high/40 backdrop-blur-md rounded-[40px] p-10 flex flex-col justify-between border border-white/5">
                             <div>
-                                <h3 class="font-headline-lg text-[28px] text-on-surface mb-6">Mastered<br /><span
+                                <h3 class="font-headline-lg text-[28px] text-on-surface mb-6" data-hacker-text="single"
+                                    data-hacker-mode="terminal" data-hacker-order="2">Mastered<br /><span
                                         class="text-primary">Tools</span></h3>
                                 <div class="flex flex-wrap gap-2">
                                     <span
@@ -492,11 +501,13 @@
                             </p>
                             <div class="flex gap-4 mt-4">
                                 <button id="view-journey-btn"
-                                    class="bg-primary text-on-primary font-label-sm text-label-sm px-8 py-4 rounded-full flex items-center gap-4 hover:scale-105 transition-transform group shadow-[0_0_20px_rgba(233,196,0,0.4)]">
+                                    class="bg-primary text-on-primary font-label-sm text-label-sm px-8 py-4 rounded-full flex items-center gap-4 hover:scale-105 transition-transform group shadow-[0_0_20px_rgba(233,196,0,0.4)]"
+                                    data-hacker-text="single" data-hacker-mode="scramble" data-hacker-order="1">
                                     VIEW JOURNEY
                                     <div
                                         class="w-8 h-8 rounded-full bg-on-primary/10 flex items-center justify-center group-hover:rotate-45 transition-transform">
-                                        <span class="material-symbols-outlined text-[18px]">arrow_outward</span>
+                                        <span
+                                            class="material-symbols-outlined text-[18px] hacker-ignore">arrow_outward</span>
                                     </div>
                                 </button>
                             </div>
@@ -508,8 +519,8 @@
                             <div class="relative w-full h-full bg-surface-container/40 backdrop-blur-3xl rounded-[60px] border border-white/10 overflow-hidden shadow-2xl"
                                 data-hacker-image="single" data-hacker-order="2">
                                 <img class="w-full h-full object-cover mix-blend-luminosity hover:mix-blend-normal transition-all duration-700"
-                                    alt="Portrait" src="assets/about-portrait.jpg" />
-                                <!-- alt="Portrait" src="assets/contact-background.jpg" -->
+                                    alt="Portrait" src="assets/about-portrait.webp" />
+                                <!-- alt="Portrait" src="assets/webp/contact-background.webp" -->
                                 <div
                                     class="absolute bottom-8 right-8 bg-surface-bright/80 backdrop-blur-xl p-6 rounded-3xl border border-white/20 flex flex-col gap-2">
                                     <span
@@ -679,12 +690,12 @@
                 <div class="grid grid-cols-12 gap-gutter" id="project-grid">
 
                     <!-- 1: Neon Genesis UI -->
-                    <div class="col-span-12 md:col-span-8 group project-card" data-project="neon-genesis">
-                        <!-- data-hacker-text="single" data-hacker-mode="terminal"> -->
+                    <div class="col-span-12 md:col-span-7 group project-card" data-project="neural-armor"
+                        data-hacker-text="single" data-hacker-mode="scramble" data-hacker-order="3">
                         <div
                             class="relative aspect-[16/9] rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
                             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                                style="background-image: url('assets/project-ai-assistant.jpg')"></div>
+                                style="background-image: url('assets/project-ai-assistant.webp')"></div>
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80">
                             </div>
@@ -692,17 +703,16 @@
                                 <div class="space-y-2">
                                     <div class="flex gap-2">
                                         <span
-                                            class="px-3 py-1 bg-primary/20 backdrop-blur-md border border-primary/30 rounded-full text-primary font-label-sm text-[10px] uppercase tracking-widest">Case
-                                            Study</span>
+                                            class="px-3 py-1 bg-primary/20 backdrop-blur-md border border-primary/30 rounded-full text-primary font-label-sm text-[10px] uppercase tracking-widest">AI</span>
                                         <span
-                                            class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white font-label-sm text-[10px] uppercase tracking-widest">Interaction</span>
+                                            class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white font-label-sm text-[10px] uppercase tracking-widest">Cybersecurity</span>
                                     </div>
-                                    <h3 class="font-headline-lg text-headline-lg text-white">NEON GENESIS UI</h3>
+                                    <h3 class="font-headline-lg text-headline-lg text-white">NEURAL ARMOR</h3>
                                 </div>
                                 <button type="button"
                                     class="project-open-btn bg-white hover:bg-primary transition-all duration-300 px-8 py-4 rounded-full flex items-center gap-4 group/btn shadow-[0_10px_40px_rgba(0,0,0,0.3)]">
                                     <span
-                                        class="font-label-sm text-on-background uppercase tracking-wider group-hover/btn:text-on-primary">View
+                                        class="font-label-sm text-on-primary uppercase tracking-wider group-hover/btn:text-on-primary">View
                                         Project</span>
                                     <div
                                         class="w-8 h-8 bg-primary rounded-full flex items-center justify-center group-hover/btn:bg-on-primary">
@@ -715,12 +725,12 @@
                     </div>
 
                     <!-- 2: System Archive -->
-                    <div class="col-span-12 md:col-span-4 group project-card" data-project="system-archive"
-                        data-hacker-text="single" data-hacker-mode="terminal">
+                    <div class="col-span-12 md:col-span-5 group project-card" data-project="digital-footprint-analyzer"
+                        data-hacker-text="single" data-hacker-mode="scramble" data-hacker-order="3">
                         <div
                             class="relative h-full rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
                             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                                style="background-image: url('assets/project-cyber-dashboard.jpg')"></div>
+                                style="background-image: url('assets/project-cyber-dashboard.webp')"></div>
                             <div class="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent"></div>
                             <div class="absolute bottom-0 left-0 p-gutter w-full">
                                 <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-6">
@@ -728,9 +738,10 @@
                                         class="hacker-ignore material-symbols-outlined text-on-primary">settings_suggest</span>
                                 </div>
                                 <h3 class="font-headline-lg text-[32px] text-white leading-none mb-4 uppercase">
-                                    SYSTEM<br />ARCHIVE</h3>
+                                    DIGITAL FOOTPRINT<br />ANALYZER</h3>
                                 <p class="font-body-md text-on-surface-variant line-clamp-2 mb-6">
-                                    A data-visualization project focused on character mechanical design blueprints.
+                                    A real-time web privacy auditing tool focused on tracking fingerprinting signals,
+                                    cookies, and domain security risks.
                                 </p>
                                 <button type="button"
                                     class="project-open-btn w-full bg-surface-container-highest/50 backdrop-blur-xl border border-white/10 hover:border-primary transition-all py-4 rounded-full flex items-center justify-center gap-2 group/btn">
@@ -744,11 +755,11 @@
                     </div>
 
                     <!-- 3: Digital Soul -->
-                    <div class="col-span-12 md:col-span-4 group project-card" data-project="digital-soul">
+                    <div class="col-span-12 md:col-span-4 group project-card" data-project="connect-net">
                         <div
                             class="relative aspect-square rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
                             <div class="absolute inset-0 bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-700"
-                                style="background-image: url('assets/project-developer.jpg')"></div>
+                                style="background-image: url('assets/project-developer.webp')"></div>
                             <div class="absolute inset-0 bg-primary/10 mix-blend-overlay"></div>
                             <div
                                 class="absolute inset-0 bg-gradient-to-tr from-background/80 via-transparent to-transparent">
@@ -758,19 +769,19 @@
                                     class="font-label-sm text-[42px] text-primary/30 font-black tracking-tighter select-none">01</span>
                             </div>
                             <div class="absolute bottom-6 left-6 right-6">
-                                <h4 class="font-headline-lg text-headline-lg-mobile text-white mb-2 uppercase">DIGITAL
-                                    SOUL</h4>
+                                <h4 class="font-headline-lg text-headline-lg-mobile text-white mb-2 uppercase">CONNECT
+                                    NET</h4>
                                 <div class="h-1 w-0 bg-primary transition-all duration-500 group-hover:w-full"></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- 4: Vibe Streamer -->
-                    <div class="col-span-12 md:col-span-5 group project-card" data-project="vibe-streamer">
+                    <!-- <div class="col-span-12 md:col-span-5 group project-card" data-project="vibe-streamer">
                         <div
                             class="relative h-full rounded-3xl overflow-hidden bg-surface-container-high/40 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
                             <div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:scale-110 group-hover:opacity-40 transition-all duration-700"
-                                style="background-image: url('assets/project-music-platform.jpg')"></div>
+                                style="background-image: url('assets/project-music-platform.webp')"></div>
                             <div class="p-gutter h-full flex flex-col justify-between relative z-10">
                                 <div>
                                     <div class="flex items-center justify-between mb-8">
@@ -799,14 +810,14 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- 5: NEW — Autonomous Robotics -->
-                    <div class="col-span-12 md:col-span-3 group project-card" data-project="robotics">
+                    <!-- <div class="col-span-12 md:col-span-3 group project-card" data-project="robotics">
                         <div
                             class="relative h-full rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
                             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                                style="background-image: url('assets/project-robotics.jpg')"></div>
+                                style="background-image: url('assets/project-robotics.webp')"></div>
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent">
                             </div>
@@ -817,14 +828,14 @@
                                     Autonomous<br />Robotics</h3>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- 6: NEW — Smart City Dashboard -->
-                    <div class="col-span-12 md:col-span-4 group project-card" data-project="smart-city">
+                    <!-- <div class="col-span-12 md:col-span-4 group project-card" data-project="smart-city">
                         <div
                             class="relative h-full rounded-3xl overflow-hidden bg-surface-container/30 backdrop-blur-md border border-white/10 transition-transform duration-500 hover:scale-[1.01] cursor-pointer">
                             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                                style="background-image: url('assets/project-smart-city.jpg')"></div>
+                                style="background-image: url('assets/project-smart-city.webp')"></div>
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/10 to-transparent">
                             </div>
@@ -836,10 +847,10 @@
                                     City<br />Dashboard</h3>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- 7: Creative Direction (also opens modal) -->
-                    <div class="col-span-12 md:col-span-5 group project-card" data-project="creative-direction">
+                    <!-- <div class="col-span-12 md:col-span-5 group project-card" data-project="creative-direction">
                         <div
                             class="relative h-full rounded-3xl overflow-hidden bg-primary p-gutter flex flex-col justify-between items-center text-center transition-transform duration-500 hover:rotate-1 cursor-pointer min-h-[220px]">
                             <div
@@ -859,7 +870,7 @@
                                 <span class="material-symbols-outlined text-primary">add</span>
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </section>
 

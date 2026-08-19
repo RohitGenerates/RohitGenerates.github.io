@@ -24,12 +24,15 @@ export default class SectionManager {
         this.edgeArmed = false;
         this.edgeDirection = null;
         this.edgeStretch = 0;
+        this.edgeState = 'idle'; // 'idle' | 'stretching' | 'blocked' | 'ready'
+        this.edgeBlockTimer = null;
+        this.wheelSuppressedUntil = 0; // hard timestamp gate, survives across transitions
 
         // --------------------------------------------------
         // Wheel gesture state
         // --------------------------------------------------
-        this.wheelActive = false;
-        this.wheelDebounce = null;
+        // this.wheelActive = false;
+        // this.wheelDebounce = null;
 
         // --------------------------------------------------
         // Touch gesture state
@@ -309,11 +312,8 @@ export default class SectionManager {
                 ? -this.edgeStretch
                 : this.edgeStretch;
 
-        gsap.to(currentSec.el, {
-            y: yOffset,
-            duration: 0.12,
-            ease: 'power2.out',
-            overwrite: true
+        gsap.set(currentSec.el, {
+            y: yOffset
         });
     }
 
@@ -355,146 +355,121 @@ export default class SectionManager {
 
     _onWheel(e) {
         if (!this.scrollEnabled) return;
-
         if (this.scrollLock.isLocked()) {
             e.preventDefault();
             return;
         }
 
-        const delta = e.deltaY;
-
-        if (Math.abs(delta) < 1) return;
-
-        // --------------------------------------------------
-        // Detect physical wheel/trackpad gestures.
-        //
-        // Multiple wheel events close together belong to
-        // the same physical gesture.
-        // --------------------------------------------------
-        clearTimeout(this.wheelDebounce);
-
-        const isNewGesture = !this.wheelActive;
-
-        this.wheelActive = true;
-
-        this.wheelDebounce = setTimeout(() => {
-            this.wheelActive = false;
-
-            // First gesture has finished.
-            // Release the stretch, but KEEP edgeArmed true.
-            //
-            // This is important:
-            // the next separate gesture is what causes
-            // the actual section transition.
-            if (this.edgeArmed) {
-                this._releaseEdgeResistance();
-            }
-        }, 180);
-
-        const isScrollingDown = delta > 0;
-
-        const isAtBottom =
-            window.scrollY + window.innerHeight >=
-            document.documentElement.scrollHeight - 20;
-
-        const isAtTop =
-            window.scrollY <= 20;
-
-        const isAtEdge = isScrollingDown
-            ? isAtBottom
-            : isAtTop;
-
-        const currentDirection =
-            isScrollingDown ? 'down' : 'up';
-
-        /* --------------------------------------------------
-           Normal scrolling inside section
-        -------------------------------------------------- */
-
-        if (!isAtEdge) {
-            this.setEdgeArmed(false);
-            this.edgeDirection = null;
-            this.edgeStretch = 0;
-
+        // Global suppression window — set after ANY transition fires.
+        // This is the fix for cascading through multiple sections on
+        // one swipe's leftover momentum.
+        if (e.timeStamp < this.wheelSuppressedUntil) {
+            e.preventDefault();
             return;
         }
 
-        /* --------------------------------------------------
-           We're at an edge.
+        const delta = e.deltaY;
+        if (Math.abs(delta) < 1) return;
 
-           Prevent the browser from continuing to scroll
-           the page / rubber-band.
-        -------------------------------------------------- */
+        const isScrollingDown = delta > 0;
+        const isAtBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 20;
+        const isAtTop = window.scrollY <= 20;
+        const isAtEdge = isScrollingDown ? isAtBottom : isAtTop;
+        const currentDirection = isScrollingDown ? 'down' : 'up';
+
+        if (!isAtEdge) {
+            this._resetEdgeState();
+            return;
+        }
 
         e.preventDefault();
 
-        /* --------------------------------------------------
-           Direction changed while armed
-        -------------------------------------------------- */
-
-        if (
-            this.edgeArmed &&
-            currentDirection !== this.edgeDirection
-        ) {
-            this.setEdgeArmed(false);
-            this.edgeDirection = null;
-
-            this._releaseEdgeResistance();
-
-            return;
+        if (this.edgeDirection && currentDirection !== this.edgeDirection) {
+            this._resetEdgeState();
         }
 
-        /* --------------------------------------------------
-           FIRST physical gesture at the edge
-        -------------------------------------------------- */
+        switch (this.edgeState) {
 
-        if (!this.edgeArmed) {
-            this.setEdgeArmed(true, currentDirection);
-            this.edgeDirection = currentDirection;
-            this.edgeStretch = 0;
+            case 'idle': {
+                this.edgeState = 'stretching';
+                this.edgeDirection = currentDirection;
+                this.edgeStretch = 0;
+                this.setEdgeArmed(true, currentDirection);
+                this._accumulateEdgeResistance(currentDirection, delta);
 
-            this._accumulateEdgeResistance(
-                currentDirection,
-                delta
-            );
-
-            return;
-        }
-
-        /* --------------------------------------------------
-           SECOND physical gesture
-           
-           wheelActive is false only after the previous
-           gesture has stopped for ~180ms.
-        -------------------------------------------------- */
-
-        if (isNewGesture) {
-            const direction = this.edgeDirection;
-
-            this.setEdgeArmed(false);
-            this.edgeDirection = null;
-
-            this._resetEdgeResistance();
-
-            if (direction === 'down') {
-                this.goToNextSection();
-            } else {
-                this.goToPrevSection();
+                // Set ONCE, on first contact. Never reset by later events.
+                this.edgeBlockTimer = setTimeout(() => {
+                    this._enterBlocked();
+                }, 150);
+                break;
             }
 
-            return;
+            case 'stretching': {
+                // Just accumulate. Do NOT touch edgeBlockTimer here.
+                this._accumulateEdgeResistance(currentDirection, delta);
+                break;
+            }
+            // case 'stretching': {
+            //     // Still within the brief window where we're actively
+            //     // rendering the stretch in response to this same swipe.
+            //     this._accumulateEdgeResistance(currentDirection, delta);
+
+            //     // Cap how long we keep stretching in response to a single
+            //     // swipe, so a long momentum tail doesn't hold it open.
+            //     clearTimeout(this.edgeBlockTimer);
+            //     this.edgeBlockTimer = setTimeout(() => {
+            //         this._enterBlocked();
+            //     }, 150);
+            //     break;
+            // }
+
+            case 'blocked': {
+                // HARD ignore. This is the 0.5–0.8s window you asked for —
+                // no accumulation, no state change, nothing. The event is
+                // just eaten, regardless of how "intentional" it looks.
+                break;
+            }
+
+            case 'ready': {
+                // First event after the block window, in the same direction,
+                // while still at the edge. This IS the trigger — no magnitude
+                // filtering, matching how a real second mouse-wheel notch
+                // would just fire immediately.
+                const direction = this.edgeDirection;
+                this._resetEdgeState();
+
+                // Suppress wheel input globally for a bit after the transition
+                // starts, so residual momentum can't cascade into the section
+                // we're arriving at.
+                this.wheelSuppressedUntil = e.timeStamp + 900;
+
+                if (direction === 'down') {
+                    this.goToNextSection();
+                } else {
+                    this.goToPrevSection();
+                }
+                break;
+            }
         }
+    }
 
-        /* --------------------------------------------------
-           Still inside the FIRST gesture.
-           
-           Continue accumulating the stretch.
-        -------------------------------------------------- */
 
-        this._accumulateEdgeResistance(
-            currentDirection,
-            delta
-        );
+    _enterBlocked() {
+        this._releaseEdgeResistance(); // single bounce, exactly once
+        this.edgeState = 'blocked';
+
+        clearTimeout(this.edgeBlockTimer);
+        this.edgeBlockTimer = setTimeout(() => {
+            this.edgeState = 'ready';
+        }, 650); // your requested 0.5–0.8s hard-ignore window
+    }
+
+    _resetEdgeState() {
+        clearTimeout(this.edgeBlockTimer);
+        this.edgeState = 'idle';
+        this.edgeDirection = null;
+        this.setEdgeArmed(false);
+        this._resetEdgeResistance();
     }
 
     /* ======================================================================
